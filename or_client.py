@@ -34,6 +34,8 @@ def _load_api_key() -> str:
         raise RuntimeError(f"Failed to load OpenRouter API key: {e}")
 
 TEXT_MODELS: list[str] = [
+    "openai/gpt-4o",
+    "openai/gpt-4o-mini",
     "nvidia/nemotron-3-super-120b-a12b:free",
     "nousresearch/hermes-3-llama-3.1-405b:free",
     "minimax/minimax-m2.5:free",
@@ -59,6 +61,8 @@ TEXT_MODELS: list[str] = [
 ]
 
 VISION_MODELS: list[str] = [
+    "openai/gpt-4o",
+    "openai/gpt-4o-mini",
     "nvidia/nemotron-nano-12b-v2-vl:free",
     "nvidia/llama-nemotron-embed-vl-1b-v2:free",
     "google/gemma-4-31b-it:free",
@@ -199,7 +203,7 @@ class OpenRouterClient:
         self,
         prompt: str,
         system: str = (
-            "You are a component of MARK XXV, an AI assistant inspired by JARVIS. "
+            "You are Max, an ultra-fast, intelligent personal desktop and system agent. "
             "Be concise, helpful, and precise."
         ),
         model: Optional[str] = None,

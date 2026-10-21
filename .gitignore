@@ -1,0 +1,45 @@
+# ═══════════════════════════════════════════════════════════════
+# MAX — .gitignore
+# ═══════════════════════════════════════════════════════════════
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Sensitive / Config
+config/api_keys.json
+
+# Memory / Database (user-specific)
+memory/long_term.json
+memory/max_memory.db
+memory/*.db-journal
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Agents directory (if present)
+.agents/

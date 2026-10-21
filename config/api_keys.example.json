@@ -1,0 +1,9 @@
+{
+    "gemini_api_key": "YOUR_GEMINI_API_KEY_HERE",
+    "openrouter_api_key": "YOUR_OPENROUTER_API_KEY_HERE",
+    "os_system": "windows",
+    "use_omniroute": true,
+    "omniroute_base_url": "http://localhost:20128/v1",
+    "omniroute_api_key": "omniroute",
+    "omniroute_model": "auto"
+}

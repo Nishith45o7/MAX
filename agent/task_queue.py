@@ -1,3 +1,10 @@
+# ==============================================================================
+# DEPRECATED: Legacy task queue (MARK XXV).
+# Superseded in MARK I-OR by unified function-calling engine in max_brain.py and AgentWorker QThread.
+# ==============================================================================
+import warnings
+warnings.warn("agent.task_queue is deprecated. Use max_brain.run_agent instead.", DeprecationWarning, stacklevel=2)
+
 import threading
 import time
 import uuid

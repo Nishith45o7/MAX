@@ -66,7 +66,7 @@ except Exception:
 try:
     from win10toast import ToastNotifier
     ToastNotifier().show_toast(
-        "MARK Reminder",
+        "MAX Reminder",
         "{safe_message}",
         duration=15,
         threaded=False

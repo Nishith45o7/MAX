@@ -1,3 +1,10 @@
+# ==============================================================================
+# DEPRECATED: Legacy multi-hop planner (MARK XXV).
+# Superseded in MARK I-OR by unified function-calling engine in max_brain.py.
+# ==============================================================================
+import warnings
+warnings.warn("agent.planner is deprecated. Use max_brain.run_agent instead.", DeprecationWarning, stacklevel=2)
+
 import json
 import re
 import sys
