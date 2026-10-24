@@ -1,6 +1,12 @@
 import json
 import os
 import sys
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 import subprocess
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -31,6 +37,26 @@ except ImportError:
         pass
     def get_recent_conversations(limit: int = 10) -> list:
         return []
+
+# Import Brigade Core, Tideline, Skills, Tools, and Agents
+try:
+    from brigade_core import get_state_dir
+    from brigade_core.config import ConfigManager
+    from brigade_core.storage import StorageManager
+    from tideline.engine import TidelineEngine
+    from skills.loader import SkillLoader
+    from tools.registry import ToolRegistry
+    from agents.registry import AgentRegistry
+    from agents.org_chart import OrgChart
+    from agents.subagent_runner import SubagentRunner
+    from cron.scheduler import CronScheduler
+    from security.anti_slop import AntiSlopDetector
+    from security.injection_guard import InjectionGuard
+    from agents.carrow import Carrow
+    _BRIGADE_LOADED = True
+except ImportError as _e:
+    print(f"[MAX Brain] Brigade framework import notice: {_e}")
+    _BRIGADE_LOADED = False
 
 # Import OmniRoute Gateway manager
 try:
@@ -499,6 +525,126 @@ TOOLS = [
                 "properties": {}
             }
         }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "recall_memory",
+            "description": "Queries Tideline long-term memory for facts, preferences, user identity, projects, or context.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string", "description": "Memory query or search terms."}
+                },
+                "required": ["query"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "write_memory",
+            "description": "Writes a persistent fact or preference into Tideline memory under provenance safety rules.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "content": {"type": "string", "description": "Fact or preference to store."},
+                    "segment": {"type": "string", "enum": ["identity", "preference", "correction", "relationship", "project", "knowledge", "context"]},
+                    "tier": {"type": "string", "enum": ["short", "long", "permanent"]}
+                },
+                "required": ["content"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "read_skill",
+            "description": "Reads the full markdown instructions and workflow guide for any available extensible skill.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "skill_name": {"type": "string", "description": "Exact name of the skill (e.g. 'docx', 'pdf', 'xlsx', 'weather')."}
+                },
+                "required": ["skill_name"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "bash_command",
+            "description": "Runs a terminal command under the Exec Approval security bridge.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "command": {"type": "string", "description": "Shell command line to execute."}
+                },
+                "required": ["command"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "analyze_media",
+            "description": "Extracts text and understands PDF, Office docs (.docx, .xlsx, .pptx), images, audio, or video files.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string", "description": "Absolute or workspace-relative path to document/media."}
+                },
+                "required": ["path"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "spawn_agent",
+            "description": "Delegates a sub-task to an isolated agent or specialized crew member on the org chart.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "agent_id": {"type": "string", "description": "Target agent ID (e.g. 'coder', 'researcher', 'main')."},
+                    "task_prompt": {"type": "string", "description": "Clear instruction for the sub-agent."}
+                },
+                "required": ["agent_id", "task_prompt"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "manage_cron",
+            "description": "Schedules, lists, or cancels autonomous recurring jobs (cron expression, interval, or timestamp).",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "action": {"type": "string", "enum": ["list", "add", "remove"]},
+                    "schedule_type": {"type": "string", "enum": ["cron", "every", "at"]},
+                    "expression": {"type": "string", "description": "Cron pattern ('0 9 * * *'), interval ('1h', '30m'), or timestamp."},
+                    "message": {"type": "string", "description": "Instruction or task to execute when triggered."},
+                    "job_id": {"type": "string", "description": "Job ID for removal."}
+                },
+                "required": ["action"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "composio_execute",
+            "description": "Executes an action via Composio 1,000+ app connectors (Gmail, GitHub, Slack, Notion, Calendar).",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "action_name": {"type": "string", "description": "Composio action name (e.g. 'GMAIL_SEND_EMAIL', 'GITHUB_CREATE_ISSUE')."},
+                    "params": {"type": "object", "description": "Action parameters."}
+                },
+                "required": ["action_name", "params"]
+            }
+        }
     }
 ]
 
@@ -687,6 +833,98 @@ def _execute_tool_call(func_name: str, args: dict) -> str:
                 return get_ip_geolocation()
             return "Geolocation service is not available."
 
+        # ── BRIGADE FRAMEWORK EXTENDED CAPABILITIES ──
+        elif func_name == "recall_memory":
+            q = args.get("query", "").strip()
+            if _BRIGADE_LOADED:
+                ws = get_state_dir() / "workspace"
+                engine = TidelineEngine.open(ws, default_origin="owner")
+                hits = engine.recall(q, top_k=5)
+                return "\n".join([f"[{h[0].segment}] {h[0].content}" for h in hits]) or "No relevant memory found."
+            return "Memory engine not available."
+
+        elif func_name == "write_memory":
+            content = args.get("content", "").strip()
+            seg = args.get("segment", "knowledge")
+            tier = args.get("tier", "long")
+            if _BRIGADE_LOADED:
+                ws = get_state_dir() / "workspace"
+                engine = TidelineEngine.open(ws, default_origin="owner")
+                try:
+                    rec = engine.add(content, segment=seg, tier=tier, origin="owner", source="user")
+                    return f"Memory stored in Tideline (ID: {rec.id})"
+                except Exception as e:
+                    return f"Write gate rejected: {e}"
+            return "Memory engine not available."
+
+        elif func_name == "read_skill":
+            skill_name = args.get("skill_name", "").strip().lower()
+            if _BRIGADE_LOADED:
+                loader = SkillLoader()
+                skills = loader.discover_skills()
+                if skill_name in skills:
+                    return f"# Skill: {skill_name}\n\n{skills[skill_name].instructions}"
+                return f"Skill '{skill_name}' not found. Available: {', '.join(sorted(skills.keys()))}"
+            return "Skill loader not available."
+
+        elif func_name == "bash_command":
+            cmd = args.get("command", "").strip()
+            if _BRIGADE_LOADED:
+                from tools.coding_tools import CodingTools
+                tools = CodingTools()
+                return tools.bash(cmd)
+            return "Command execution not available."
+
+        elif func_name == "analyze_media":
+            media_path = args.get("path", "").strip()
+            if _BRIGADE_LOADED:
+                from tools.doc_tools import DocumentTools
+                dt = DocumentTools()
+                return json.dumps(dt.analyze_media(media_path), indent=2)
+            return "Media analysis not available."
+
+        elif func_name == "spawn_agent":
+            tgt = args.get("agent_id", "main").strip()
+            prompt = args.get("task_prompt", "").strip()
+            if _BRIGADE_LOADED:
+                runner = SubagentRunner()
+                res = runner.spawn_agent(
+                    parent_id="main",
+                    target_agent=tgt,
+                    prompt=prompt,
+                    agent_executor=lambda a, p: run_agent(p, max_iterations=3, agent_id=a)
+                )
+                return json.dumps(res, indent=2)
+            return "Sub-agent runner not available."
+
+        elif func_name == "manage_cron":
+            action = args.get("action", "list")
+            if _BRIGADE_LOADED:
+                cron = CronScheduler()
+                if action == "list":
+                    return json.dumps([j.__dict__ for j in cron.list_jobs()], indent=2)
+                elif action == "add":
+                    st = args.get("schedule_type", "every")
+                    expr = args.get("expression", "1h")
+                    msg = args.get("message", "Heartbeat")
+                    job = cron.add_job(st, expr, msg)
+                    return f"Created cron job '{job.id}'."
+                elif action == "remove":
+                    jid = args.get("job_id", "")
+                    if cron.remove_job(jid):
+                        return f"Removed job '{jid}'."
+                    return f"Job '{jid}' not found."
+            return "Cron engine not available."
+
+        elif func_name == "composio_execute":
+            act_name = args.get("action_name", "")
+            params = args.get("params", {})
+            if _BRIGADE_LOADED:
+                from tools.composio_tool import ComposioTool
+                ct = ComposioTool()
+                return json.dumps(ct.execute_action(act_name, params), indent=2)
+            return "Composio connectors not available."
+
         return f"Error: Tool '{func_name}' is not recognized."
     except Exception as e:
         return f"Error executing '{func_name}': {str(e)}"
@@ -695,43 +933,104 @@ def _execute_tool_call(func_name: str, args: dict) -> str:
 # ─────────────────────────────────────────────────────────────────────────────
 # MAIN AGENT ORCHESTRATION PIPELINE
 # ─────────────────────────────────────────────────────────────────────────────
-def run_agent(user_prompt: str, max_iterations: int = 5) -> str:
+def run_agent(
+    user_prompt: str,
+    max_iterations: int = 5,
+    session_id: str = "main",
+    origin: str = "owner",
+    agent_id: str = "main"
+) -> str:
     """
     Autonomous multi-turn execution loop:
-    1. Retrieves persistent context & injects memory.
-    2. Resolves active LLM client (OmniRoute Gateway -> Groq -> OpenRouter).
-    3. Runs requested tool calls iteratively.
-    4. Re-injects outputs back into context.
-    5. Saves interaction turn to SQLite database.
+    1. Handles in-chat slash commands (/status, /org, /agents, /skills, /cron, /doctor).
+    2. Retrieves persistent context & injects Tideline long-term memory.
+    3. Injects prompt-resident extensible skills catalog.
+    4. Resolves active LLM client (OmniRoute Gateway -> Groq -> OpenRouter).
+    5. Runs requested tool calls iteratively.
+    6. Re-injects outputs back into context.
+    7. Saves interaction turn to SQLite database and JSONL session stream.
     """
     if not user_prompt or not user_prompt.strip():
         return "No prompt provided."
 
     user_prompt_clean = user_prompt.strip()
 
+    # ── IN-CHAT SLASH COMMANDS ──
+    if user_prompt_clean.startswith("/"):
+        cmd = user_prompt_clean.split()[0].lower()
+        if cmd == "/status" and _BRIGADE_LOADED:
+            from cli.brigade_cli import cmd_status
+            import io
+            buf = io.StringIO()
+            sys_stdout_orig = sys.stdout
+            try:
+                sys.stdout = buf
+                class Args: json = False
+                cmd_status(Args())
+                return buf.getvalue().strip()
+            finally:
+                sys.stdout = sys_stdout_orig
+        elif cmd == "/org" and _BRIGADE_LOADED:
+            return OrgChart().render_tree()
+        elif cmd == "/agents" and _BRIGADE_LOADED:
+            agents = AgentRegistry().list_agents()
+            return "\n".join([f"• {a.get('emoji', '🤖')} **{a['name']}** (`{a['id']}`): {a.get('description', '')}" for a in agents])
+        elif cmd == "/skills" and _BRIGADE_LOADED:
+            skills = SkillLoader().discover_skills(agent_id=agent_id)
+            return SkillLoader().build_prompt_catalog(skills)
+        elif cmd == "/cron" and _BRIGADE_LOADED:
+            jobs = CronScheduler().list_jobs()
+            return "\n".join([f"• [{ 'ENABLED' if j.enabled else 'DISABLED' }] `{j.id}`: {j.schedule_type} '{j.expression}' -> {j.message}" for j in jobs]) or "No cron jobs configured."
+        elif cmd == "/doctor" and _BRIGADE_LOADED:
+            issues = OrgChart().doctor()
+            return "🩺 System Status: Healthy\nOrg lints:\n" + ("\n".join(issues) if issues else "None.")
+        elif cmd == "/help":
+            return (
+                "🦁 **Brigade & MAX Command Shortcuts**:\n"
+                "• `/status` - View system, gateway, and memory status\n"
+                "• `/org` - View crew Org Chart & Pride hierarchy\n"
+                "• `/agents` - List active agents\n"
+                "• `/skills` - View extensible skills catalog\n"
+                "• `/cron` - View scheduled cron jobs\n"
+                "• `/doctor` - Run health checks\n"
+                "• `/abort` - Abort active run"
+            )
+
+    # Sanitize user prompt for prompt injection
+    if _BRIGADE_LOADED:
+        has_threat, _ = InjectionGuard.scan(user_prompt_clean)
+        if has_threat:
+            user_prompt_clean = InjectionGuard.sanitize(user_prompt_clean)
+
     # Retrieve relevant persistent memory context
     memory_context = get_context_for_prompt(user_prompt_clean, max_items=5)
+    tideline_context = ""
+    skills_context = ""
+
+    if _BRIGADE_LOADED:
+        try:
+            ws = get_state_dir() / "workspace" if agent_id == "main" else get_state_dir() / "agents" / agent_id / "workspace"
+            engine = TidelineEngine.open(ws, default_origin=origin)
+            tideline_context = engine.context(user_prompt_clean, max_chars=800, origin=origin)
+        except Exception:
+            pass
+
+        try:
+            loader = SkillLoader()
+            skills = loader.discover_skills(agent_id=agent_id)
+            skills_context = loader.build_prompt_catalog(skills)
+        except Exception:
+            pass
 
     system_instruction = (
-        "You are M.A.X (Mark I-OR), an autonomous AI assistant and digital companion. "
-        "You operate with authority, intelligence, and precision.\n"
-        "Available Capabilities:\n"
-        "- 'search_web': Live search for recent news, events, or real-time research.\n"
-        "- 'create_styled_presentation': Build customized .pptx decks with dynamic HEX palettes.\n"
-        "- 'create_pdf': Generate formatted reports on the user's Desktop.\n"
-        "- 'launch_application': Launch desktop apps (notepad, chrome, vscode, calc, etc.).\n"
-        "- 'adjust_computer_settings': Control volume, check battery status, sleep display, etc.\n"
-        "- 'manage_local_files': List folders, read files, check existence, or write files.\n"
-        "- 'check_omniroute_gateway': Check status, view active models, or start OmniRoute local AI gateway.\n"
-        "- 'get_live_weather': Live weather & 3-day forecast for any city or current location (wttr.in).\n"
-        "- 'get_crypto_currency_rates': Real-time crypto prices (CoinGecko) and fiat conversions (Frankfurter).\n"
-        "- 'get_wikipedia_summary': Instant encyclopedic summaries for concepts, people, science, or places.\n"
-        "- 'get_top_tech_news': Trending technology & AI headlines from Hacker News.\n"
-        "- 'get_ip_geolocation': Host network insights, current city, timezone, and ISP.\n"
+        "You are M.A.X (Mark I-OR), an autonomous AI assistant and personal intelligence coordinator. "
+        "You operate with authority, intelligence, precision, and decisive tool execution.\n\n"
         "Guidelines:\n"
-        "- Proactively invoke tools when asked to execute tasks or retrieve facts.\n"
-        "- Synthesize tool results cleanly and succinctly for the user.\n"
-        f"{memory_context}"
+        "- Proactively invoke tools when asked to execute tasks, create documents, or retrieve facts.\n"
+        "- Synthesize tool results cleanly, succinctly, and factually for the user.\n"
+        f"{memory_context}\n"
+        f"{tideline_context}\n\n"
+        f"{skills_context}"
     )
 
     messages: List[Dict[str, Any]] = [
@@ -741,6 +1040,8 @@ def run_agent(user_prompt: str, max_iterations: int = 5) -> str:
 
     # Save incoming user message to SQLite conversation history
     save_conversation_turn("user", user_prompt_clean)
+    if _BRIGADE_LOADED:
+        StorageManager().append_session_turn(agent_id, session_id, "user", user_prompt_clean)
 
     # Resolve active client & models (OmniRoute prioritized, with fallback to Groq / OpenRouter)
     active_client, candidate_models, provider_name = _get_active_llm_client()
@@ -798,6 +1099,9 @@ def run_agent(user_prompt: str, max_iterations: int = 5) -> str:
         # Case 1: Final natural language synthesis achieved
         if not choice.tool_calls:
             final_content = choice.content or "Task completed successfully."
+            if _BRIGADE_LOADED:
+                final_content = AntiSlopDetector.clean_openers(final_content)
+                StorageManager().append_session_turn(agent_id, session_id, "assistant", final_content)
             save_conversation_turn("assistant", final_content)
             return final_content
 
@@ -833,6 +1137,9 @@ def run_agent(user_prompt: str, max_iterations: int = 5) -> str:
     except Exception as e:
         reply = f"Completed actions with final synthesis notice: {e}"
 
+    if _BRIGADE_LOADED:
+        reply = AntiSlopDetector.clean_openers(reply)
+        StorageManager().append_session_turn(agent_id, session_id, "assistant", reply)
     save_conversation_turn("assistant", reply)
     return reply
 
