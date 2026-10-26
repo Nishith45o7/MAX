@@ -34,8 +34,8 @@ generated/
 
 # Memory / Database (user-specific)
 memory/long_term.json
-memory/max_memory.db
-memory/*.db-journal
+memory/max_memory.db*
+memory/*.db*
 
 # OS files
 .DS_Store
