@@ -89,6 +89,30 @@ except ImportError:
     def create_pdf(title, paragraphs, filename="document.pdf"):
         return "Error: doc_tools.py not found. PDF could not be created."
 
+def generate_image(prompt: str, filename: Optional[str] = None) -> str:
+    """Generates an image via AI (Pollinations Flux) and saves to Desktop."""
+    import urllib.parse
+    import requests
+    import time
+    try:
+        clean_p = prompt.strip()
+        encoded = urllib.parse.quote(clean_p)
+        url = f"https://image.pollinations.ai/prompt/{encoded}?width=1024&height=1024&nologo=true"
+        resp = requests.get(url, timeout=30)
+        if resp.status_code == 200:
+            desktop = Path.home() / "Desktop"
+            desktop.mkdir(parents=True, exist_ok=True)
+            fname = filename or f"generated_{int(time.time())}.png"
+            if not fname.endswith(".png") and not fname.endswith(".jpg"):
+                fname += ".png"
+            out_path = desktop / fname
+            with open(out_path, "wb") as f:
+                f.write(resp.content)
+            return f"Image successfully generated and saved to {out_path.name} on Desktop."
+        return f"Image generation failed with status code {resp.status_code}."
+    except Exception as e:
+        return f"Image generation error: {e}"
+
 # Import bridged action modules
 try:
     from actions.open_app import open_app
@@ -241,6 +265,23 @@ TOOLS = [
                     }
                 },
                 "required": ["query"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "generate_image",
+            "description": "Generates AI artwork or realistic images from a descriptive prompt and saves them to Desktop (automatically sent to Telegram).",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "prompt": {
+                        "type": "string",
+                        "description": "Descriptive visual prompt for image generation."
+                    }
+                },
+                "required": ["prompt"]
             }
         }
     },
@@ -660,6 +701,11 @@ def _execute_tool_call(func_name: str, args: dict) -> str:
             print(f"[System Tool]: Running search for: '{query}'")
             return search_web(query)
 
+        elif func_name == "generate_image":
+            prompt = args.get("prompt", "").strip()
+            print(f"[System Tool]: Generating image for prompt: '{prompt}'")
+            return generate_image(prompt)
+
         elif func_name == "create_styled_presentation":
             filename = args.get("filename", "Presentation.pptx")
             if not filename.endswith(".pptx"):
@@ -1027,7 +1073,8 @@ def run_agent(
         "You operate with authority, intelligence, precision, and decisive tool execution.\n\n"
         "Guidelines:\n"
         "- Proactively invoke tools when asked to execute tasks, create documents, or retrieve facts.\n"
-        "- Synthesize tool results cleanly, succinctly, and factually for the user.\n"
+        "- Synthesize tool results cleanly, factually, and thoroughly for the user.\n"
+        "- When providing news, market updates, or search results, ALWAYS provide a comprehensive, well-structured SUMMARY with key highlights, context, and bullet points. NEVER just output raw links or headline lists unless specifically asked.\n"
         f"{memory_context}\n"
         f"{tideline_context}\n\n"
         f"{skills_context}"

@@ -224,23 +224,55 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await voice_file.download_to_drive(str(temp_path))
 
     transcription = ""
-    # Transcribe using Groq Whisper API
+    # Method 1: Google GenAI (Gemini 2.5 Flash natively processes voice notes)
     try:
-        groq_key = max_brain._load_api_key()
-        if groq_key and groq_key != "YOUR_GROQ_API_KEY_HERE":
-            from openai import OpenAI
-            whisper_client = OpenAI(
-                base_url="https://api.groq.com/openai/v1",
-                api_key=groq_key
-            )
+        gemini_key = ""
+        if API_CONFIG_PATH.exists():
+            with open(API_CONFIG_PATH, "r", encoding="utf-8") as f:
+                cfg = json.load(f)
+                gemini_key = cfg.get("gemini_api_key", "").strip()
+        gemini_key = os.environ.get("GEMINI_API_KEY", gemini_key).strip()
+
+        if gemini_key:
+            from google import genai
+            from google.genai import types
+            client = genai.Client(api_key=gemini_key)
             with open(temp_path, "rb") as af:
-                trans_obj = whisper_client.audio.transcriptions.create(
-                    model="whisper-large-v3",
-                    file=af
+                audio_bytes = af.read()
+            response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=[
+                    types.Part.from_bytes(data=audio_bytes, mime_type="audio/ogg"),
+                    "Transcribe this audio voice message exactly as spoken. Return ONLY the transcribed text, without formatting, preamble, or quotation marks."
+                ]
+            )
+            if response and response.text:
+                transcription = response.text.strip()
+                logger.info(f"Gemini voice transcription successful: {transcription}")
+    except Exception as ge:
+        logger.warning(f"Gemini voice transcription failed: {ge}")
+
+    # Method 2: Groq Whisper API fallback
+    if not transcription:
+        try:
+            groq_key = os.environ.get("GROQ_API_KEY", "")
+            if not groq_key and API_CONFIG_PATH.exists():
+                with open(API_CONFIG_PATH, "r", encoding="utf-8") as f:
+                    groq_key = json.load(f).get("groq_api_key", "")
+            if groq_key and groq_key != "YOUR_GROQ_API_KEY_HERE":
+                from openai import OpenAI
+                whisper_client = OpenAI(
+                    base_url="https://api.groq.com/openai/v1",
+                    api_key=groq_key
                 )
-                transcription = trans_obj.text.strip()
-    except Exception as e:
-        logger.warning(f"Groq Whisper transcription failed: {e}")
+                with open(temp_path, "rb") as af:
+                    trans_obj = whisper_client.audio.transcriptions.create(
+                        model="whisper-large-v3",
+                        file=af
+                    )
+                    transcription = trans_obj.text.strip()
+        except Exception as e:
+            logger.warning(f"Groq Whisper transcription failed: {e}")
 
     # Clean up temp file
     try:
@@ -291,7 +323,14 @@ def run_telegram_daemon():
     else:
         print("[Telegram Gateway] Warning: No allowed user IDs restricted. Anyone with the bot link can send commands.")
 
-    application = Application.builder().token(token).build()
+    application = (
+        Application.builder()
+        .token(token)
+        .read_timeout(30)
+        .write_timeout(30)
+        .connect_timeout(30)
+        .build()
+    )
 
     application.add_handler(CommandHandler("start", start_cmd))
     application.add_handler(CommandHandler("status", status_cmd))
