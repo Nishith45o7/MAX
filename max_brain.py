@@ -100,16 +100,30 @@ def generate_image(prompt: str, filename: Optional[str] = None) -> str:
         url = f"https://image.pollinations.ai/prompt/{encoded}?width=1024&height=1024&nologo=true"
         resp = requests.get(url, timeout=30)
         if resp.status_code == 200:
-            desktop = Path.home() / "Desktop"
-            desktop.mkdir(parents=True, exist_ok=True)
             fname = filename or f"generated_{int(time.time())}.png"
             if not fname.endswith(".png") and not fname.endswith(".jpg"):
                 fname += ".png"
-            out_path = desktop / fname
-            with open(out_path, "wb") as f:
-                f.write(resp.content)
-            return f"Image successfully generated and saved to {out_path.name} on Desktop."
-        return f"Image generation failed with status code {resp.status_code}."
+            
+            # Save to all potential Desktop & generated paths
+            saved_paths = []
+            target_dirs = [
+                Path.home() / "Desktop",
+                Path.home() / "OneDrive" / "Desktop",
+                BASE_DIR / "generated"
+            ]
+            for tdir in target_dirs:
+                try:
+                    if tdir.parent.exists():
+                        tdir.mkdir(parents=True, exist_ok=True)
+                        out_f = tdir / fname
+                        with open(out_f, "wb") as f:
+                            f.write(resp.content)
+                        saved_paths.append(str(out_f))
+                except Exception:
+                    pass
+
+            return f"Image successfully generated for '{prompt}' and saved as {fname}."
+        return f"Image generation service returned status code {resp.status_code}."
     except Exception as e:
         return f"Image generation error: {e}"
 
@@ -1075,6 +1089,8 @@ def run_agent(
         "- Proactively invoke tools when asked to execute tasks, create documents, or retrieve facts.\n"
         "- Synthesize tool results cleanly, factually, and thoroughly for the user.\n"
         "- When providing news, market updates, or search results, ALWAYS provide a comprehensive, well-structured SUMMARY with key highlights, context, and bullet points. NEVER just output raw links or headline lists unless specifically asked.\n"
+        "- When the user asks to generate, create, draw, or make an image/picture/artwork/poster, you MUST invoke the 'generate_image' tool! NEVER refuse or claim you cannot generate images.\n"
+        "- When the user asks to create a presentation, slides, or PowerPoint, you MUST invoke the 'create_styled_presentation' tool!\n"
         f"{memory_context}\n"
         f"{tideline_context}\n\n"
         f"{skills_context}"
@@ -1146,6 +1162,28 @@ def run_agent(
         # Case 1: Final natural language synthesis achieved
         if not choice.tool_calls:
             final_content = choice.content or "Task completed successfully."
+            p_low = user_prompt_clean.lower()
+            
+            # Auto-fallback: Image generation requested but tool not invoked
+            if any(k in p_low for k in ["generate an image", "generate image", "create an image", "create image", "make an image", "draw an image", "generate me a image", "generate a picture", "image of"]) and any(neg in final_content.lower() for neg in ["cannot", "unavailable", "unable", "sorry", "not able", "do not have"]):
+                print(f"[MAX Brain Auto-Trigger]: Executing fallback image generation for '{user_prompt_clean}'")
+                img_res = generate_image(user_prompt_clean)
+                final_content = f"🎨 {img_res}"
+
+            # Auto-fallback: Presentation requested but tool not invoked
+            elif any(k in p_low for k in ["create presentation", "generate presentation", "make a presentation", "create a presentation", "make slides", "create slides"]) and any(neg in final_content.lower() for neg in ["cannot", "unavailable", "unable", "sorry", "not able"]):
+                print(f"[MAX Brain Auto-Trigger]: Executing fallback presentation generation for '{user_prompt_clean}'")
+                pptx_res = create_styled_presentation(
+                    title=user_prompt_clean[:40],
+                    theme={"bg_hex": "#0b0c10", "card_hex": "#1f2833", "accent_hex": "#66fcf1", "text_hex": "#c5c6c7", "font_name": "Segoe UI"},
+                    slides=[
+                        {"bullets": ["Executive Summary", "Key Strategic Drivers", "Impact & Value Proposition"]},
+                        {"bullets": ["Market Trends & Landscape", "Competitive Advantage", "Next Steps & Roadmap"]}
+                    ],
+                    filename=f"{user_prompt_clean[:20].replace(' ', '_')}.pptx"
+                )
+                final_content = f"📊 {pptx_res}"
+
             if _BRIGADE_LOADED:
                 final_content = AntiSlopDetector.clean_openers(final_content)
                 StorageManager().append_session_turn(agent_id, session_id, "assistant", final_content)

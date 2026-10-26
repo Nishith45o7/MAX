@@ -77,20 +77,45 @@ def _is_user_authorized(user_id: int, allowed_ids: Set[int]) -> bool:
 
 
 def _get_recent_desktop_files(since_timestamp: float) -> List[Path]:
-    """Finds newly created .pptx, .pdf, or doc files on Desktop since execution started."""
+    """Finds newly created .pptx, .pdf, or doc/image files across all Desktop & generated folders."""
     results = []
-    try:
-        if DESKTOP_DIR.exists():
-            for f in DESKTOP_DIR.iterdir():
-                if f.is_file() and f.suffix.lower() in [".pptx", ".pdf", ".docx", ".png", ".jpg"]:
-                    try:
-                        if f.stat().st_mtime >= since_timestamp:
-                            results.append(f)
-                    except Exception:
-                        pass
-    except Exception as e:
-        logger.warning(f"Error checking recent desktop files: {e}")
+    search_dirs = [
+        DESKTOP_DIR,
+        Path.home() / "OneDrive" / "Desktop",
+        Path.home() / "Desktop",
+        BASE_DIR / "generated"
+    ]
+    seen_paths = set()
+    for sdir in search_dirs:
+        try:
+            if sdir.exists():
+                for f in sdir.iterdir():
+                    if f.is_file() and f.suffix.lower() in [".pptx", ".pdf", ".docx", ".png", ".jpg", ".jpeg"]:
+                        try:
+                            if f.stat().st_mtime >= since_timestamp and f.name not in seen_paths:
+                                seen_paths.add(f.name)
+                                results.append(f)
+                        except Exception:
+                            pass
+        except Exception as e:
+            logger.warning(f"Error checking folder {sdir}: {e}")
     return results
+
+
+async def _dispatch_generated_files(update: Update, since_timestamp: float):
+    """Sends any newly created files to Telegram (photos as photos, docs as documents)."""
+    if not update.message:
+        return
+    new_files = _get_recent_desktop_files(since_timestamp)
+    for nf in new_files:
+        try:
+            with open(nf, "rb") as doc_f:
+                if nf.suffix.lower() in [".png", ".jpg", ".jpeg"]:
+                    await update.message.reply_photo(photo=doc_f, caption=f"🎨 Generated Image: {nf.name}")
+                else:
+                    await update.message.reply_document(document=doc_f, caption=f"📁 Generated: {nf.name}")
+        except Exception as fe:
+            logger.error(f"Error sending file {nf}: {fe}")
 
 
 async def start_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -195,13 +220,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(reply)
 
     # Check if files were generated during this run and send them
-    new_files = _get_recent_desktop_files(start_time - 2)
-    for nf in new_files:
-        try:
-            with open(nf, "rb") as doc_f:
-                await update.message.reply_document(document=doc_f, caption=f"Generated: {nf.name}")
-        except Exception as fe:
-            logger.error(f"Error sending file {nf}: {fe}")
+    await _dispatch_generated_files(update, start_time - 2)
 
 
 async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -296,13 +315,7 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(reply)
 
     # Check if files were generated during this run and send them
-    new_files = _get_recent_desktop_files(start_time - 2)
-    for nf in new_files:
-        try:
-            with open(nf, "rb") as doc_f:
-                await update.message.reply_document(document=doc_f, caption=f"Generated: {nf.name}")
-        except Exception as fe:
-            logger.error(f"Error sending file {nf}: {fe}")
+    await _dispatch_generated_files(update, start_time - 2)
 
 
 def run_telegram_daemon():

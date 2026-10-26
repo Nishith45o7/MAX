@@ -6,7 +6,13 @@ from pptx.enum.shapes import MSO_SHAPE
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 
-DESKTOP_DIR = os.path.join(os.path.expanduser("~"), "Desktop")
+def _get_desktop_dir() -> str:
+    onedrive_desktop = os.path.join(os.path.expanduser("~"), "OneDrive", "Desktop")
+    if os.path.exists(onedrive_desktop):
+        return onedrive_desktop
+    return os.path.join(os.path.expanduser("~"), "Desktop")
+
+DESKTOP_DIR = _get_desktop_dir()
 
 def hex_to_rgb(hex_str: str) -> RGBColor:
     hex_str = hex_str.lstrip('#')
