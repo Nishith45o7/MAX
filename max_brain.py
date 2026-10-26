@@ -181,6 +181,23 @@ def _load_groq_key() -> str:
     return ""
 
 
+def _load_gemini_key() -> str:
+    key = os.environ.get("GEMINI_API_KEY", "").strip()
+    if key:
+        return key
+
+    if API_CONFIG_PATH.exists():
+        try:
+            with open(API_CONFIG_PATH, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            key = data.get("gemini_api_key", "").strip()
+            if key and not key.startswith("YOUR_"):
+                return key
+        except Exception:
+            pass
+    return ""
+
+
 def _load_openrouter_key() -> str:
     key = os.environ.get("OPENROUTER_API_KEY", "").strip()
     if key:
@@ -209,11 +226,21 @@ def _get_active_llm_client() -> Tuple[OpenAI, List[str], str]:
     """
     Dynamically resolves the active LLM client and ordered candidate models.
     Priority:
-    1. OmniRoute AI Gateway (http://localhost:20128/v1 - 375+ providers, 1400+ models with auto-fallback)
-    2. Direct Groq Cloud
-    3. Direct OpenRouter Gateway
+    1. Direct Google Gemini Cloud (Free, fast, native tool-calling with 1M context)
+    2. OmniRoute AI Gateway (http://localhost:20128/v1 - 375+ providers, 1400+ models)
+    3. Direct Groq Cloud
+    4. Direct OpenRouter Gateway
     """
-    # 1. Check OmniRoute Local Gateway
+    # 1. Check Google Gemini Cloud
+    gemini_key = _load_gemini_key()
+    if gemini_key:
+        gemini_client = OpenAI(
+            base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+            api_key=gemini_key
+        )
+        return gemini_client, ["gemini-2.5-flash"], "Google Gemini 2.5 Flash"
+
+    # 2. Check OmniRoute Local Gateway
     try:
         omni_cfg = load_omniroute_config()
         if omni_cfg.get("enabled", True) and is_omniroute_alive(omni_cfg["base_url"]):
@@ -221,7 +248,6 @@ def _get_active_llm_client() -> Tuple[OpenAI, List[str], str]:
                 base_url=omni_cfg["base_url"],
                 api_key=omni_cfg.get("api_key") or "omniroute"
             )
-            # Candidate models: start with configured model (default: "auto"), plus top tier models
             models = [omni_cfg.get("model") or "auto"]
             for m in ["auto", "gpt-4o", "claude-3-7-sonnet", "deepseek-chat", "gemini-2.5-flash", "llama-3.3-70b"]:
                 if m not in models:
@@ -230,7 +256,7 @@ def _get_active_llm_client() -> Tuple[OpenAI, List[str], str]:
     except Exception as e:
         print(f"[MAX Brain] OmniRoute probe error: {e}")
 
-    # 2. Check Groq
+    # 3. Check Groq
     groq_key = _load_groq_key()
     if groq_key:
         groq_client = OpenAI(
@@ -239,7 +265,7 @@ def _get_active_llm_client() -> Tuple[OpenAI, List[str], str]:
         )
         return groq_client, DEFAULT_GROQ_MODELS, "Groq Cloud"
 
-    # 3. Check OpenRouter
+    # 4. Check OpenRouter
     or_key = _load_openrouter_key()
     if or_key:
         or_client = OpenAI(
