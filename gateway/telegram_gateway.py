@@ -130,23 +130,61 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.text:
         return
 
-    user_id = update.effective_user.id if update.effective_user else 0
-    token, allowed_ids = _load_telegram_config()
-    if not _is_user_authorized(user_id, allowed_ids):
-        await update.message.reply_text("⛔ Access denied: You are not authorized on this host.")
+    user_id = str(update.effective_user.id if update.effective_user else 0)
+    user_name = update.effective_user.first_name if update.effective_user else "User"
+    user_text = update.message.text.strip()
+    msg_id = str(update.message.message_id)
+
+    from channels.base import ChannelMessage
+    from channels.inbound_pipeline import InboundPipeline
+    pipeline = InboundPipeline()
+    ch_msg = ChannelMessage(
+        channel="telegram",
+        account_id="default",
+        sender_id=user_id,
+        sender_name=user_name,
+        message_id=msg_id,
+        text=user_text
+    )
+
+    res = pipeline.process_inbound(ch_msg)
+    if res.status == "duplicate":
+        return
+    if res.status in ["pairing_required", "aborted"] and res.response_text:
+        await update.message.reply_text(res.response_text, parse_mode="Markdown")
         return
 
-    user_text = update.message.text.strip()
+    # Check owner pairing approval command
+    if res.is_owner and user_text.startswith("/approve "):
+        code = user_text.split(maxsplit=1)[1]
+        ok, reason = pipeline.approve_pairing(code, "telegram")
+        await update.message.reply_text(reason)
+        return
+
+    if res.is_owner and user_text.startswith("/pending"):
+        pairings = [f"- `{c}`: {info.get('sender_name')} ({info.get('sender_id')})" for c, info in pipeline.pending_pairings.items()]
+        reply = "Pending Requests:\n" + ("\n".join(pairings) if pairings else "None.")
+        await update.message.reply_text(reply, parse_mode="Markdown")
+        return
+
     logger.info(f"Received text command from {user_id}: {user_text}")
 
     # Visual feedback: Send initial status
     status_msg = await update.message.reply_text("🧠 *M.A.X is thinking...*", parse_mode="Markdown")
     start_time = time.time()
 
-    # Run agent in background executor to prevent event-loop block
+    # Run agent in background executor with session isolation
     loop = asyncio.get_running_loop()
     try:
-        reply = await loop.run_in_executor(None, max_brain.run_agent, user_text)
+        reply = await loop.run_in_executor(
+            None,
+            lambda: max_brain.run_agent(
+                user_text,
+                session_id=res.session_key,
+                origin=f"telegram:{user_id}",
+                agent_id=res.target_agent
+            )
+        )
     except Exception as e:
         reply = f"Execution error in M.A.X Brain: {e}"
 

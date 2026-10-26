@@ -921,8 +921,16 @@ class ChatGPTStream(QWidget):
         row2.addWidget(c4)
         grid_col.addLayout(row2)
 
+        row3 = QHBoxLayout()
+        row3.setSpacing(10)
+        c5 = self._make_card("🦁 Crew & Org Chart", "View multi-agent hierarchy, Pride chart, and roles", "/org")
+        c6 = self._make_card("🧠 System & Memory", "Inspect Tideline persistent facts and gateway status", "/status")
+        row3.addWidget(c5)
+        row3.addWidget(c6)
+        grid_col.addLayout(row3)
+
         h_lay.addLayout(grid_col)
-        self._card_buttons = [c1, c2, c3, c4]
+        self._card_buttons = [c1, c2, c3, c4, c5, c6]
         return hero
 
     def _make_card(self, title: str, subtitle: str, prompt_text: str) -> QPushButton:
