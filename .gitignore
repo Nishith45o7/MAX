@@ -28,6 +28,10 @@ env/
 # Sensitive / Config
 config/api_keys.json
 
+# Runtime generated artifacts
+generated/
+
+
 # Memory / Database (user-specific)
 memory/long_term.json
 memory/max_memory.db
