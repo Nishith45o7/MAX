@@ -160,6 +160,60 @@ except ImportError:
     get_top_tech_news = None
     get_ip_geolocation = None
 
+# Import new action modules (Update-6)
+try:
+    from actions.free_llm_hub import free_llm_hub
+except ImportError:
+    free_llm_hub = None
+try:
+    from actions.document_manager import document_manager
+except ImportError:
+    document_manager = None
+try:
+    from actions.bookmark_manager import bookmark_manager
+except ImportError:
+    bookmark_manager = None
+try:
+    from actions.vault_manager import vault_manager
+except ImportError:
+    vault_manager = None
+try:
+    from actions.knowledge_base import knowledge_base
+except ImportError:
+    knowledge_base = None
+try:
+    from actions.network_guard import network_guard
+except ImportError:
+    network_guard = None
+try:
+    from actions.sync_engine import sync_engine
+except ImportError:
+    sync_engine = None
+try:
+    from actions.smart_home import smart_home
+except ImportError:
+    smart_home = None
+try:
+    from actions.media_library import media_library
+except ImportError:
+    media_library = None
+try:
+    from actions.finance_engine import finance_engine
+except ImportError:
+    finance_engine = None
+try:
+    from actions.ai_studio import ai_studio
+except ImportError:
+    ai_studio = None
+try:
+    from actions.inbox_agent import inbox_agent
+except ImportError:
+    inbox_agent = None
+try:
+    from actions.reverse_engineer import reverse_engineer
+except ImportError:
+    reverse_engineer = None
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # CREDENTIALS & INFERENCE CLIENT RESOLUTION (OMNIROUTE + FALLBACKS)
@@ -726,7 +780,21 @@ TOOLS = [
                 "required": ["action_name", "params"]
             }
         }
-    }
+    },
+    # ── Update-6 Tools ──
+    {"type": "function", "function": {"name": "free_llm_hub", "description": "Discover, list, benchmark free LLM API providers. Actions: list_providers, benchmark, quick_chat, discover.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "prompt": {"type": "string"}, "provider": {"type": "string"}, "model": {"type": "string"}}, "required": ["action"]}}},
+    {"type": "function", "function": {"name": "document_manager", "description": "PDF/document operations: merge, split, compress, watermark, encrypt, OCR, search, index.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "file_path": {"type": "string"}, "files": {"type": "string"}, "query": {"type": "string"}, "password": {"type": "string"}, "text": {"type": "string"}, "pages": {"type": "string"}}, "required": ["action"]}}},
+    {"type": "function", "function": {"name": "bookmark_manager", "description": "Save, search, tag, import/export bookmarks. Actions: add, search, list, delete, tag, export, import.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "url": {"type": "string"}, "title": {"type": "string"}, "tags": {"type": "string"}, "query": {"type": "string"}, "file_path": {"type": "string"}, "bookmark_id": {"type": "string"}}, "required": ["action"]}}},
+    {"type": "function", "function": {"name": "vault_manager", "description": "Encrypted password vault, password generator, breach check. Actions: store, retrieve, list, delete, generate, breach_check, export.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "service": {"type": "string"}, "username": {"type": "string"}, "password": {"type": "string"}, "master_password": {"type": "string"}, "length": {"type": "string"}}, "required": ["action"]}}},
+    {"type": "function", "function": {"name": "knowledge_base", "description": "Notes, snippets, skills library with full-text search. Actions: add_note, search, list, delete, add_snippet, list_snippets, add_skill, list_skills, link_notes.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "title": {"type": "string"}, "content": {"type": "string"}, "tags": {"type": "string"}, "query": {"type": "string"}, "note_id": {"type": "string"}, "language": {"type": "string"}, "skill_name": {"type": "string"}}, "required": ["action"]}}},
+    {"type": "function", "function": {"name": "network_guard", "description": "DNS blocking, tracker detection, privacy report, speed test. Actions: block_domain, unblock, blocklist, check_trackers, privacy_report, speed_test.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "domain": {"type": "string"}, "url": {"type": "string"}}, "required": ["action"]}}},
+    {"type": "function", "function": {"name": "sync_engine", "description": "File sync monitoring, folder compare, backup/restore. Actions: watch, compare, backup, restore, status, history.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "source": {"type": "string"}, "target": {"type": "string"}, "path": {"type": "string"}, "name": {"type": "string"}}, "required": ["action"]}}},
+    {"type": "function", "function": {"name": "smart_home", "description": "Home Assistant integration: list devices, toggle, set state, scenes, automations. Actions: list_devices, toggle, set_state, scenes, trigger_scene, automations, status.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "entity_id": {"type": "string"}, "state": {"type": "string"}, "scene_id": {"type": "string"}}, "required": ["action"]}}},
+    {"type": "function", "function": {"name": "media_library", "description": "Scan media, AI image gen, thumbnails, playlists. Actions: scan, search, generate_image, playlist_create, playlist_list, thumbnail, stats.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "path": {"type": "string"}, "query": {"type": "string"}, "prompt": {"type": "string"}, "name": {"type": "string"}, "file_path": {"type": "string"}}, "required": ["action"]}}},
+    {"type": "function", "function": {"name": "finance_engine", "description": "Stock quotes, portfolio tracking, crypto, technical analysis. Actions: quote, portfolio_add, portfolio_view, analysis, crypto, market_summary, news.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "symbol": {"type": "string"}, "shares": {"type": "string"}, "price": {"type": "string"}, "coin": {"type": "string"}}, "required": ["action"]}}},
+    {"type": "function", "function": {"name": "ai_studio", "description": "AI image gen, avatar, ad copy, TTS, style transfer, meme. Actions: generate_image, avatar, ad_copy, tts, style_transfer, upscale, meme.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "prompt": {"type": "string"}, "text": {"type": "string"}, "style": {"type": "string"}, "file_path": {"type": "string"}, "voice": {"type": "string"}}, "required": ["action"]}}},
+    {"type": "function", "function": {"name": "inbox_agent", "description": "Email check, clipboard AI, task delegation, team broadcast. Actions: check_email, send_email, clipboard_ai, delegate_task, broadcast, task_status.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "to": {"type": "string"}, "subject": {"type": "string"}, "body": {"type": "string"}, "message": {"type": "string"}, "agent": {"type": "string"}, "task": {"type": "string"}}, "required": ["action"]}}},
+    {"type": "function", "function": {"name": "reverse_engineer", "description": "Binary analysis, AST code analysis, diagrams, security scan, hex dump. Actions: analyze_binary, analyze_code, diagram, security_scan, hex_dump, decompile, strings.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "file_path": {"type": "string"}, "code": {"type": "string"}, "query": {"type": "string"}}, "required": ["action"]}}}
 ]
 
 
@@ -1010,6 +1078,34 @@ def _execute_tool_call(func_name: str, args: dict) -> str:
                 ct = ComposioTool()
                 return json.dumps(ct.execute_action(act_name, params), indent=2)
             return "Composio connectors not available."
+
+        # ── Update-6 Tools ──
+        elif func_name == "free_llm_hub":
+            return free_llm_hub(parameters=args) if free_llm_hub else "Module not available."
+        elif func_name == "document_manager":
+            return document_manager(parameters=args) if document_manager else "Module not available."
+        elif func_name == "bookmark_manager":
+            return bookmark_manager(parameters=args) if bookmark_manager else "Module not available."
+        elif func_name == "vault_manager":
+            return vault_manager(parameters=args) if vault_manager else "Module not available."
+        elif func_name == "knowledge_base":
+            return knowledge_base(parameters=args) if knowledge_base else "Module not available."
+        elif func_name == "network_guard":
+            return network_guard(parameters=args) if network_guard else "Module not available."
+        elif func_name == "sync_engine":
+            return sync_engine(parameters=args) if sync_engine else "Module not available."
+        elif func_name == "smart_home":
+            return smart_home(parameters=args) if smart_home else "Module not available."
+        elif func_name == "media_library":
+            return media_library(parameters=args) if media_library else "Module not available."
+        elif func_name == "finance_engine":
+            return finance_engine(parameters=args) if finance_engine else "Module not available."
+        elif func_name == "ai_studio":
+            return ai_studio(parameters=args) if ai_studio else "Module not available."
+        elif func_name == "inbox_agent":
+            return inbox_agent(parameters=args) if inbox_agent else "Module not available."
+        elif func_name == "reverse_engineer":
+            return reverse_engineer(parameters=args) if reverse_engineer else "Module not available."
 
         return f"Error: Tool '{func_name}' is not recognized."
     except Exception as e:

@@ -36,6 +36,13 @@ generated/
 memory/long_term.json
 memory/max_memory.db*
 memory/*.db*
+memory/.*
+memory/blocked_domains.json
+memory/doc_index.json
+memory/email_config.json
+memory/finance_*.json
+memory/ha_config.json
+memory/sync_state.json
 
 # OS files
 .DS_Store

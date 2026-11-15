@@ -16,6 +16,8 @@ duckduckgo-search>=5.0.0
 beautifulsoup4>=4.12.0
 python-pptx>=0.6.21
 reportlab>=4.0.0
+PyPDF2>=3.0.0
+cryptography>=41.0.0
 
 # Layer 3: OS Automation, Hardware & Telemetry
 psutil>=5.9.0

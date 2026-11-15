@@ -38,6 +38,21 @@ from actions.web_search        import web_search as web_search_action
 from actions.computer_control  import computer_control
 from actions.game_updater      import game_updater
 
+# ── Update-6: New Feature Modules ──
+from actions.free_llm_hub      import free_llm_hub
+from actions.document_manager  import document_manager
+from actions.bookmark_manager  import bookmark_manager
+from actions.vault_manager     import vault_manager
+from actions.knowledge_base    import knowledge_base
+from actions.network_guard     import network_guard
+from actions.sync_engine       import sync_engine
+from actions.smart_home        import smart_home
+from actions.media_library     import media_library
+from actions.finance_engine    import finance_engine
+from actions.ai_studio         import ai_studio
+from actions.inbox_agent       import inbox_agent
+from actions.reverse_engineer  import reverse_engineer
+
 
 def get_base_dir():
     if getattr(sys, "frozen", False):
@@ -495,6 +510,216 @@ TOOL_DECLARATIONS = [
             "required": ["category", "key", "value"]
         }
     },
+    # ── Update-6: New Feature Tool Declarations ──
+    {
+        "name": "free_llm_hub",
+        "description": "Manages 15+ free LLM API providers: list, test, benchmark, discover models across Groq, OpenRouter, Gemini, Cerebras, etc.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "action": {"type": "STRING", "description": "list_providers | test_provider | benchmark | discover_models | provider_info"},
+                "provider": {"type": "STRING", "description": "Provider ID for test/discover (e.g. groq, openrouter, google_gemini)"}
+            },
+            "required": ["action"]
+        }
+    },
+    {
+        "name": "document_manager",
+        "description": "PDF tools: merge, split, compress, extract text, watermark, rotate, encrypt. Plus document indexing and search.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "action": {"type": "STRING", "description": "merge_pdfs | split_pdf | compress_pdf | pdf_to_text | pdf_info | watermark_pdf | rotate_pdf | encrypt_pdf | html_to_pdf | index_documents | search_documents"},
+                "path": {"type": "STRING", "description": "File or folder path"},
+                "files": {"type": "STRING", "description": "Comma-separated PDF paths for merge"},
+                "query": {"type": "STRING", "description": "Search query for search_documents"},
+                "text": {"type": "STRING", "description": "Watermark text"},
+                "password": {"type": "STRING", "description": "Password for encrypt"},
+                "pages": {"type": "STRING", "description": "Page range for split (e.g. 1-3,5)"},
+                "content": {"type": "STRING", "description": "HTML/text content for html_to_pdf"},
+            },
+            "required": ["action"]
+        }
+    },
+    {
+        "name": "bookmark_manager",
+        "description": "Save, search, tag, organize, export/import web bookmarks.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "action": {"type": "STRING", "description": "save | list | search | delete | tag | export | import_bookmarks"},
+                "url": {"type": "STRING", "description": "Bookmark URL"},
+                "title": {"type": "STRING", "description": "Bookmark title"},
+                "tags": {"type": "STRING", "description": "Comma-separated tags"},
+                "query": {"type": "STRING", "description": "Search query"},
+                "id": {"type": "STRING", "description": "Bookmark ID"},
+                "format": {"type": "STRING", "description": "Export format: json or html"},
+            },
+            "required": ["action"]
+        }
+    },
+    {
+        "name": "vault_manager",
+        "description": "Encrypted credential vault: store/retrieve passwords, generate secure passwords, check breaches via HIBP.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "action": {"type": "STRING", "description": "store | retrieve | list | delete | generate_password | check_breach | export"},
+                "service": {"type": "STRING", "description": "Service name"},
+                "username": {"type": "STRING", "description": "Username"},
+                "password": {"type": "STRING", "description": "Password"},
+                "length": {"type": "INTEGER", "description": "Password length for generate"},
+                "query": {"type": "STRING", "description": "Search query for retrieve"},
+            },
+            "required": ["action"]
+        }
+    },
+    {
+        "name": "knowledge_base",
+        "description": "Notes, knowledge graph, skills library, code snippets. Add, search, link notes. Store reusable skills and code.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "action": {"type": "STRING", "description": "add_note | search_notes | list_notes | get_note | delete_note | link_notes | add_skill | list_skills | get_skill | add_snippet | search_snippets | export_knowledge"},
+                "title": {"type": "STRING", "description": "Note/skill/snippet title"},
+                "content": {"type": "STRING", "description": "Note content"},
+                "name": {"type": "STRING", "description": "Skill name"},
+                "query": {"type": "STRING", "description": "Search query"},
+                "tags": {"type": "STRING", "description": "Tags"},
+                "category": {"type": "STRING", "description": "Category: idea|reference|project|meeting|journal"},
+                "code": {"type": "STRING", "description": "Code for snippet"},
+                "language": {"type": "STRING", "description": "Programming language"},
+                "id": {"type": "STRING", "description": "Note/skill ID"},
+            },
+            "required": ["action"]
+        }
+    },
+    {
+        "name": "network_guard",
+        "description": "Network security: block/unblock domains, DNS queries, tracker detection, privacy reports, speed tests, network scanning.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "action": {"type": "STRING", "description": "block_domain | unblock_domain | list_blocked | dns_query | check_trackers | privacy_report | hosts_file_status | flush_dns | network_scan | speed_test"},
+                "domain": {"type": "STRING", "description": "Domain name"},
+                "url": {"type": "STRING", "description": "URL to check for trackers"},
+            },
+            "required": ["action"]
+        }
+    },
+    {
+        "name": "sync_engine",
+        "description": "File sync: watch folders for changes, compare folders, backup/restore, track file modifications.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "action": {"type": "STRING", "description": "sync_status | sync_folder | add_watch | remove_watch | compare_folders | backup_folder | restore_backup | list_synced"},
+                "path": {"type": "STRING", "description": "Folder path"},
+                "source": {"type": "STRING", "description": "Source folder for compare"},
+                "target": {"type": "STRING", "description": "Target folder for compare"},
+                "destination": {"type": "STRING", "description": "Destination for backup"},
+            },
+            "required": ["action"]
+        }
+    },
+    {
+        "name": "smart_home",
+        "description": "Home Assistant smart home control: toggle lights/switches, set brightness/temperature/color, activate scenes.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "action": {"type": "STRING", "description": "status | list_devices | toggle | set_brightness | set_temperature | set_color | scene | automation_list | configure"},
+                "entity": {"type": "STRING", "description": "Entity ID or device name"},
+                "brightness": {"type": "INTEGER", "description": "Brightness 0-255"},
+                "temperature": {"type": "NUMBER", "description": "Temperature in Celsius"},
+                "color": {"type": "STRING", "description": "Color name: red, blue, warm, cool, etc."},
+                "scene": {"type": "STRING", "description": "Scene name to activate"},
+            },
+            "required": ["action"]
+        }
+    },
+    {
+        "name": "media_library",
+        "description": "Media library: scan folders for audio/video/images, generate AI images, thumbnails, extract video frames, create playlists, organize media.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "action": {"type": "STRING", "description": "scan_library | search_media | media_info | generate_image | generate_thumbnail | extract_frames | convert_format | organize_media | play_media | create_playlist"},
+                "path": {"type": "STRING", "description": "File or folder path"},
+                "query": {"type": "STRING", "description": "Search query"},
+                "prompt": {"type": "STRING", "description": "Image generation prompt"},
+                "name": {"type": "STRING", "description": "Playlist name"},
+                "format": {"type": "STRING", "description": "Target format for conversion"},
+            },
+            "required": ["action"]
+        }
+    },
+    {
+        "name": "finance_engine",
+        "description": "Finance: stock quotes, market overview, portfolio tracking, watchlist, crypto analysis, forex rates, technical analysis.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "action": {"type": "STRING", "description": "stock_quote | market_overview | portfolio_track | portfolio_summary | watchlist | crypto_analysis | forex_rates | technical_analysis | stock_news"},
+                "symbol": {"type": "STRING", "description": "Stock ticker (e.g. AAPL, TSLA)"},
+                "coin": {"type": "STRING", "description": "Crypto coin ID (e.g. bitcoin, ethereum)"},
+                "shares": {"type": "NUMBER", "description": "Number of shares"},
+                "buy_price": {"type": "NUMBER", "description": "Purchase price per share"},
+                "sub_action": {"type": "STRING", "description": "For watchlist: add | remove | list"},
+                "query": {"type": "STRING", "description": "News search query"},
+            },
+            "required": ["action"]
+        }
+    },
+    {
+        "name": "ai_studio",
+        "description": "AI creative studio: generate images, avatars, ad copy, text-to-speech, style transfer, upscale, remove background, memes.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "action": {"type": "STRING", "description": "generate_image | generate_avatar | generate_ad_copy | text_to_speech | style_transfer | upscale_image | remove_background | generate_video_frames | creative_brief | meme_generator"},
+                "prompt": {"type": "STRING", "description": "Image/creative prompt"},
+                "style": {"type": "STRING", "description": "Art style"},
+                "product": {"type": "STRING", "description": "Product for ad copy"},
+                "text": {"type": "STRING", "description": "Text for TTS"},
+                "path": {"type": "STRING", "description": "Image file path"},
+                "top_text": {"type": "STRING", "description": "Meme top text"},
+                "bottom_text": {"type": "STRING", "description": "Meme bottom text"},
+                "size": {"type": "STRING", "description": "Image size: square|landscape|portrait|social|banner"},
+            },
+            "required": ["action"]
+        }
+    },
+    {
+        "name": "inbox_agent",
+        "description": "Smart inbox: check/summarize emails, compose drafts, smart replies, clipboard AI, task delegation, team broadcast.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "action": {"type": "STRING", "description": "check_inbox | summarize_inbox | compose_email | smart_reply | clipboard_ai | clipboard_history | delegate_task | task_status | team_broadcast"},
+                "to": {"type": "STRING", "description": "Email recipient"},
+                "subject": {"type": "STRING", "description": "Email subject"},
+                "body": {"type": "STRING", "description": "Email body"},
+                "title": {"type": "STRING", "description": "Task title"},
+                "assignee": {"type": "STRING", "description": "Task assignee"},
+                "message": {"type": "STRING", "description": "Broadcast message"},
+                "operation": {"type": "STRING", "description": "Clipboard operation: summarize|translate|format|extract"},
+            },
+            "required": ["action"]
+        }
+    },
+    {
+        "name": "reverse_engineer",
+        "description": "Reverse engineering: analyze binaries, code analysis, system monitoring, process tree, generate diagrams, security scanning, hex dumps.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "action": {"type": "STRING", "description": "analyze_binary | analyze_code | system_monitor | process_tree | generate_diagram | dependency_graph | security_scan | hex_dump | api_map | decompile_python"},
+                "path": {"type": "STRING", "description": "File or folder path"},
+            },
+            "required": ["action"]
+        }
+    },
 ]
 
 
@@ -688,6 +913,45 @@ class JarvisLive:
 
             elif name == "flight_finder":
                 r = await loop.run_in_executor(None, lambda: flight_finder(parameters=args, player=self.ui))
+                result = r or "Done."
+            elif name == "free_llm_hub":
+                r = await loop.run_in_executor(None, lambda: free_llm_hub(parameters=args, player=self.ui))
+                result = r or "Done."
+            elif name == "document_manager":
+                r = await loop.run_in_executor(None, lambda: document_manager(parameters=args, player=self.ui))
+                result = r or "Done."
+            elif name == "bookmark_manager":
+                r = await loop.run_in_executor(None, lambda: bookmark_manager(parameters=args, player=self.ui))
+                result = r or "Done."
+            elif name == "vault_manager":
+                r = await loop.run_in_executor(None, lambda: vault_manager(parameters=args, player=self.ui))
+                result = r or "Done."
+            elif name == "knowledge_base":
+                r = await loop.run_in_executor(None, lambda: knowledge_base(parameters=args, player=self.ui))
+                result = r or "Done."
+            elif name == "network_guard":
+                r = await loop.run_in_executor(None, lambda: network_guard(parameters=args, player=self.ui))
+                result = r or "Done."
+            elif name == "sync_engine":
+                r = await loop.run_in_executor(None, lambda: sync_engine(parameters=args, player=self.ui))
+                result = r or "Done."
+            elif name == "smart_home":
+                r = await loop.run_in_executor(None, lambda: smart_home(parameters=args, player=self.ui))
+                result = r or "Done."
+            elif name == "media_library":
+                r = await loop.run_in_executor(None, lambda: media_library(parameters=args, player=self.ui))
+                result = r or "Done."
+            elif name == "finance_engine":
+                r = await loop.run_in_executor(None, lambda: finance_engine(parameters=args, player=self.ui))
+                result = r or "Done."
+            elif name == "ai_studio":
+                r = await loop.run_in_executor(None, lambda: ai_studio(parameters=args, player=self.ui))
+                result = r or "Done."
+            elif name == "inbox_agent":
+                r = await loop.run_in_executor(None, lambda: inbox_agent(parameters=args, player=self.ui))
+                result = r or "Done."
+            elif name == "reverse_engineer":
+                r = await loop.run_in_executor(None, lambda: reverse_engineer(parameters=args, player=self.ui))
                 result = r or "Done."
             elif name == "shutdown_jarvis":
                 self.ui.write_log("SYS: Shutdown requested.")

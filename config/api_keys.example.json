@@ -5,5 +5,10 @@
     "use_omniroute": true,
     "omniroute_base_url": "http://localhost:20128/v1",
     "omniroute_api_key": "omniroute",
-    "omniroute_model": "auto"
+    "omniroute_model": "auto",
+    "ha_url": "http://homeassistant.local:8123",
+    "ha_token": "",
+    "imap_server": "",
+    "email": "",
+    "email_password": ""
 }

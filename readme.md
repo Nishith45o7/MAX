@@ -89,7 +89,7 @@
 ## <img src="https://media.giphy.com/media/VgCDAzcKvsR6OM0uWg/giphy.gif" width="30" height="30"/> Features
 
 <div align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=18&pause=1500&color=FF6B6B&center=true&vCenter=true&repeat=true&width=500&lines=%E2%9A%A1+18+Action+Modules+%7C+4+Core+Engines;%F0%9F%94%A5+Built+for+Total+Desktop+Autonomy" alt="Features Count" />
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=18&pause=1500&color=FF6B6B&center=true&vCenter=true&repeat=true&width=600&lines=%E2%9A%A1+31+Action+Modules+%7C+4+Core+Engines;%F0%9F%94%A5+37+Open-Source+Ecosystem+Integrations;%F0%9F%9B%A1%EF%B8%8F+Zero+Subscription+%E2%80%A2+Total+Desktop+Autonomy" alt="Features Count" />
 </div>
 
 <br/>
@@ -231,6 +231,31 @@ Memory Architecture
 </details>
 
 <details>
+<summary><h3>⚡ Update-6: Power Modules (37 Repositories Integrated)</h3></summary>
+
+<br/>
+
+> **37 open-source projects** distilled into 13 high-performance native modules with zero mandatory subscriptions.
+
+| Module | Features & Capabilities | Inspired By |
+|:---|:---|:---|
+| 🌐 **Free LLM Hub** | 14+ free LLM providers (Groq, OpenRouter, Cerebras, SambaNova, Pollinations, Gemini), latency benchmark, model discovery | `awesome-freellm-apis`, `MiniCPM` |
+| 📑 **Document Manager** | PDF merge/split/compress, watermark, AES encrypt, OCR text extract, HTML to PDF, document search & indexing | `paperless-ngx`, `Stirling-PDF`, `ppt-master` |
+| 🔖 **Bookmark Manager** | Bookmark storage with auto-title extraction, tag taxonomy, full-text search, JSON export | `karkeep` |
+| 🔐 **Encrypted Vault** | AES-256 Fernet credential vault, strong password generator, HaveIBeenPwned k-anonymity breach checker | `vaultwarden`, `bitwarden/server` |
+| 🧠 **Second Brain / KB** | FTS5 notes, bidirectional note links, skills repository, searchable code snippet library | `anytype-ts`, `claude-mem`, `paperclip`, `everything-claude-code`, `skills` |
+| 🛡️ **Network Guard** | Hosts-file DNS ad/tracker blocker (30+ known ad domains), DNS lookup, privacy audit report, speed test | `AdGuardHome`, `camofox-browser` |
+| 🔄 **Sync Engine** | Multi-folder change monitoring, SHA-256 comparison, timestamped zip backups & instant restore | `syncthing` |
+| 🏠 **Smart Home (IoT)** | Home Assistant REST integration, light/switch/climate control, scenes, automations, with built-in offline demo mode | `home-assistant/core` |
+| 🎬 **Media Library** | Audio/video scanner, Pollinations AI image gen, thumbnail generator, video frame extraction, playlist builder | `audiobookshelf`, `ComfyUI`, `Handy` |
+| 📈 **Finance Engine** | Real-time stock quotes (Yahoo/AlphaVantage), crypto prices, portfolio tracker with P&L, RSI/SMA technical analysis | `AutoHedge`, `Vibe-Trading`, `FinceptTerminal` |
+| 🎨 **AI Creative Studio** | Text-to-image, avatar generator, multi-platform ad copywriter, TTS speech output, meme creator, creative briefs | `Open-Generative-AI`, `Open-LLM-VTuber`, `claude-ads`, `hyperframes`, `VibeVoice`, `OmniVoice`, `granite-speech-models` |
+| 📥 **Agentic Inbox** | IMAP email reader, clipboard AI assistant (summarize/translate/fix), multi-agent task delegator, team broadcast | `agentic-inbox`, `agency-agents` |
+| 🔬 **Reverse Engineer** | PE/ELF binary inspector, Python AST code analyzer, Mermaid diagram generator, security flaw scanner, hex viewer | `gods-eye-view`, `rea`, `diagram-design`, `HeyGemini` |
+
+</details>
+
+<details>
 <summary><h3>🤖 Autonomous Agent Engine</h3></summary>
 
 <br/>
@@ -324,22 +349,35 @@ MAX/
 ├── 📄 doc_tools.py             # PDF & PowerPoint generation
 ├── 🌐 web_tool.py              # Web search utility
 │
-├── ⚡ actions/                  # ─── Modular Action Plugins ───
+├── ⚡ actions/                  # ─── Modular Action Plugins (31 Total) ───
+│   ├── ai_studio.py             #     🎨 Generative AI, avatars, TTS & ad copy
+│   ├── bookmark_manager.py      #     🔖 Smart URL bookmarking & tagging
 │   ├── browser_control.py       #     🌐 Playwright browser automation
 │   ├── code_helper.py           #     💻 Code analysis & generation
 │   ├── computer_control.py      #     🖥️ Terminal & system commands
 │   ├── computer_settings.py     #     ⚙️ Volume, brightness, shortcuts
 │   ├── desktop.py               #     🖱️ Desktop automation (clicks, typing)
 │   ├── dev_agent.py             #     🛠️ Full development workflow agent
+│   ├── document_manager.py      #     📑 PDF merge/split/OCR & doc search
 │   ├── file_controller.py       #     📂 File CRUD operations
 │   ├── file_processor.py        #     📎 Document upload & analysis
+│   ├── finance_engine.py        #     📈 Real-time stocks, crypto & portfolio
 │   ├── flight_finder.py         #     ✈️ Flight search & comparison
+│   ├── free_llm_hub.py          #     🌐 14+ free LLM provider gateway & bench
 │   ├── game_updater.py          #     🎮 Steam & Epic Games management
+│   ├── inbox_agent.py           #     📥 IMAP email, clipboard AI & task delegation
+│   ├── knowledge_base.py        #     🧠 Notes, code snippets & skills library
+│   ├── media_library.py         #     🎬 Media scanner, player & AI generation
+│   ├── network_guard.py         #     🛡️ Hosts ad/tracker blocker & network test
 │   ├── open_app.py              #     🚀 Cross-platform app launcher
 │   ├── public_api_tools.py      #     🔌 Public API integrations
 │   ├── reminder.py              #     ⏰ Smart reminders
+│   ├── reverse_engineer.py      #     🔬 Binary/AST analysis, diagrams & audit
 │   ├── screen_processor.py      #     👁️ Real-time screen vision
 │   ├── send_message.py          #     💬 Message dispatch
+│   ├── smart_home.py            #     🏠 Home Assistant & IoT automation
+│   ├── sync_engine.py           #     🔄 Folder sync watcher, diff & backup
+│   ├── vault_manager.py         #     🔐 AES-256 encrypted password vault & HIBP
 │   ├── weather_report.py        #     🌤️ Weather information
 │   ├── web_search.py            #     🔍 DuckDuckGo search engine
 │   └── youtube_video.py         #     📺 YouTube operations
@@ -443,16 +481,23 @@ Create your config file from the template:
     "use_omniroute": true,
     "omniroute_base_url": "http://localhost:20128/v1",
     "omniroute_api_key": "omniroute",
-    "omniroute_model": "auto"
+    "omniroute_model": "auto",
+    "ha_url": "http://homeassistant.local:8123",
+    "ha_token": "",
+    "imap_server": "",
+    "email": "",
+    "email_password": ""
 }
 ```
 
 <div align="center">
 
-| Key | Source | Cost |
-|:---|:---:|:---:|
-| `gemini_api_key` | [Google AI Studio](https://aistudio.google.com/apikey) | ![Free](https://img.shields.io/badge/-Free-brightgreen?style=flat-square) |
-| `openrouter_api_key` | [OpenRouter](https://openrouter.ai/keys) | ![Free](https://img.shields.io/badge/-Free-brightgreen?style=flat-square) |
+| Key | Description | Source | Cost |
+|:---|:---|:---:|:---:|
+| `gemini_api_key` | Primary voice & vision LLM | [Google AI Studio](https://aistudio.google.com/apikey) | ![Free](https://img.shields.io/badge/-Free-brightgreen?style=flat-square) |
+| `openrouter_api_key` | Fast reasoning fallback | [OpenRouter](https://openrouter.ai/keys) | ![Free](https://img.shields.io/badge/-Free-brightgreen?style=flat-square) |
+| `ha_token` *(optional)* | Home Assistant long-lived access token | HA Profile Settings | ![Free](https://img.shields.io/badge/-Free-brightgreen?style=flat-square) |
+| `email` *(optional)* | IMAP email checking for Inbox Agent | Gmail / Outlook App Password | ![Free](https://img.shields.io/badge/-Free-brightgreen?style=flat-square) |
 
 </div>
 
