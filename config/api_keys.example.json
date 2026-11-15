@@ -6,9 +6,13 @@
     "omniroute_base_url": "http://localhost:20128/v1",
     "omniroute_api_key": "omniroute",
     "omniroute_model": "auto",
+    "telegram_bot_token": "",
+    "telegram_allowed_users": [],
     "ha_url": "http://homeassistant.local:8123",
     "ha_token": "",
-    "imap_server": "",
+    "imap_server": "imap.gmail.com",
     "email": "",
-    "email_password": ""
+    "email_password": "",
+    "httpsms_api_key": "",
+    "mobile_no": ""
 }
