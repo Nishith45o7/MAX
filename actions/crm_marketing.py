@@ -189,3 +189,4 @@ def crm_marketing(parameters: dict, player=None) -> str:
         )
 
     return f"Unknown action '{action}'. Available: verify_email, crm_add_contact, crm_list_contacts, campaign_broadcast, sms_gateway, whatsapp_trigger, growth_strategy"
+

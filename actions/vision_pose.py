@@ -152,3 +152,4 @@ def vision_pose(parameters: dict, player=None) -> str:
         return f"💃 MoCap Motion Data Exported:\n  • File: {out_json}\n  • Format: 3D Joint Rotations (Blender/BVH Compatible)\n  • Frames: 10 @ 30 FPS"
 
     return f"Unknown action '{action}'. Available: posture_check, analyze_pose, gesture_detect, stickman_storyboard, mocap_export"
+

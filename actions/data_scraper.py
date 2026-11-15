@@ -209,3 +209,4 @@ def data_scraper(parameters: dict, player=None) -> str:
         )
 
     return f"Unknown action '{action}'. Available: scrape_url, google_maps_leads, omniget_download, deep_crawl, youtube_extract"
+

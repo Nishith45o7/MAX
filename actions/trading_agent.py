@@ -116,3 +116,4 @@ def trading_agent(parameters: dict, player=None) -> str:
         )
 
     return f"Unknown action '{action}'. Available: multi_agent_consensus, backtest_strategy, risk_metrics, strategy_catalog"
+

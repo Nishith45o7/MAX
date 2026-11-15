@@ -152,3 +152,4 @@ def workflow_engine(parameters: dict, player=None) -> str:
         )
 
     return f"Unknown action '{action}'. Available: list_pipelines, create_pipeline, run_pipeline, webhook_dispatch, trigger_event"
+

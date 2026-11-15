@@ -147,3 +147,4 @@ def security_suite(parameters: dict, player=None) -> str:
         return f"🚨 CVE Intelligence: {cve_id}\n  • Summary: {desc}\n  • Mitigation: Update software to latest patched vendor releases."
 
     return f"Unknown action '{action}'. Available: security_headers, ssl_audit, ioc_scan, ai_red_team, cve_lookup"
+
