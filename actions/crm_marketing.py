@@ -56,6 +56,9 @@ def crm_marketing(parameters: dict, player=None) -> str:
         "sms": "sms_gateway",
         "whatsapp": "whatsapp_trigger",
         "wa": "whatsapp_trigger",
+        "push": "push_notification",
+        "ntfy": "push_notification",
+        "notify": "push_notification",
         "marketing": "growth_strategy",
         "growth": "growth_strategy",
     }
@@ -172,6 +175,29 @@ def crm_marketing(parameters: dict, player=None) -> str:
             f"  • Status: Sent via Android GSM Gateway (Carrier ID: SIM1)\n"
             f"  • Message ID: sms_{int(time.time())}"
         )
+
+    # ── 6. Wi-Fi Push Notifications (ntfy.sh - Zero SIM required) ────────
+    elif action == "push_notification":
+        topic = (parameters.get("topic") or "max_agent_alerts").strip()
+        msg = (parameters.get("message") or parameters.get("text") or "MAX Notification").strip()
+        title = (parameters.get("title") or "MAX AI Desktop Assistant").strip()
+        try:
+            import requests
+            resp = requests.post(
+                f"https://ntfy.sh/{topic}",
+                data=msg.encode("utf-8"),
+                headers={"Title": title, "Priority": "high", "Tags": "robot,bell"},
+                timeout=6
+            )
+            return (
+                f"🔔 Instant Wi-Fi Push Notification Sent:\n"
+                f"  • Topic: {topic}\n"
+                f"  • Message: '{msg}'\n"
+                f"  • Status: Delivered (HTTP {resp.status_code})\n"
+                f"  • View on your phone: https://ntfy.sh/{topic} (or via free ntfy Android/iOS app)"
+            )
+        except Exception as e:
+            return f"Push notification error: {e}"
 
     # ── 6. WhatsApp Bot Trigger (WA-AKG-style) ─────────────────────────────
     elif action == "whatsapp_trigger":
