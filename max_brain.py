@@ -213,6 +213,34 @@ try:
     from actions.reverse_engineer import reverse_engineer
 except ImportError:
     reverse_engineer = None
+try:
+    from actions.vision_pose import vision_pose
+except ImportError:
+    vision_pose = None
+try:
+    from actions.data_scraper import data_scraper
+except ImportError:
+    data_scraper = None
+try:
+    from actions.trading_agent import trading_agent
+except ImportError:
+    trading_agent = None
+try:
+    from actions.security_suite import security_suite
+except ImportError:
+    security_suite = None
+try:
+    from actions.crm_marketing import crm_marketing
+except ImportError:
+    crm_marketing = None
+try:
+    from actions.workflow_engine import workflow_engine
+except ImportError:
+    workflow_engine = None
+try:
+    from actions.cloud_sandbox import cloud_sandbox
+except ImportError:
+    cloud_sandbox = None
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -794,7 +822,14 @@ TOOLS = [
     {"type": "function", "function": {"name": "finance_engine", "description": "Stock quotes, portfolio tracking, crypto, technical analysis. Actions: quote, portfolio_add, portfolio_view, analysis, crypto, market_summary, news.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "symbol": {"type": "string"}, "shares": {"type": "string"}, "price": {"type": "string"}, "coin": {"type": "string"}}, "required": ["action"]}}},
     {"type": "function", "function": {"name": "ai_studio", "description": "AI image gen, avatar, ad copy, TTS, style transfer, meme. Actions: generate_image, avatar, ad_copy, tts, style_transfer, upscale, meme.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "prompt": {"type": "string"}, "text": {"type": "string"}, "style": {"type": "string"}, "file_path": {"type": "string"}, "voice": {"type": "string"}}, "required": ["action"]}}},
     {"type": "function", "function": {"name": "inbox_agent", "description": "Email check, clipboard AI, task delegation, team broadcast. Actions: check_email, send_email, clipboard_ai, delegate_task, broadcast, task_status.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "to": {"type": "string"}, "subject": {"type": "string"}, "body": {"type": "string"}, "message": {"type": "string"}, "agent": {"type": "string"}, "task": {"type": "string"}}, "required": ["action"]}}},
-    {"type": "function", "function": {"name": "reverse_engineer", "description": "Binary analysis, AST code analysis, diagrams, security scan, hex dump. Actions: analyze_binary, analyze_code, diagram, security_scan, hex_dump, decompile, strings.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "file_path": {"type": "string"}, "code": {"type": "string"}, "query": {"type": "string"}}, "required": ["action"]}}}
+    {"type": "function", "function": {"name": "reverse_engineer", "description": "Binary analysis, AST code analysis, diagrams, security scan, hex dump. Actions: analyze_binary, analyze_code, diagram, security_scan, hex_dump, decompile, strings.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "file_path": {"type": "string"}, "code": {"type": "string"}, "query": {"type": "string"}}, "required": ["action"]}}},
+    {"type": "function", "function": {"name": "vision_pose", "description": "2D/3D human pose analysis, posture check, gesture recognition, stickman storyboard directing, mocap export.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "file_path": {"type": "string"}, "prompt": {"type": "string"}}, "required": ["action"]}}},
+    {"type": "function", "function": {"name": "data_scraper", "description": "Stealth web scraping, Google Maps business leads, universal omniget media downloader, deep web crawler.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "url": {"type": "string"}, "query": {"type": "string"}, "location": {"type": "string"}}, "required": ["action"]}}},
+    {"type": "function", "function": {"name": "trading_agent", "description": "Multi-agent trading research consensus, systematic strategy backtesting (SMA/RSI/Bollinger), Value-at-Risk modeling.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "symbol": {"type": "string"}, "strategy": {"type": "string"}}, "required": ["action"]}}},
+    {"type": "function", "function": {"name": "security_suite", "description": "Cybersecurity toolkit: SSL/TLS audit, security headers check, IOC threat hunter, Ares AI red-teaming, CVE lookup.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "url": {"type": "string"}, "ioc": {"type": "string"}}, "required": ["action"]}}},
+    {"type": "function", "function": {"name": "crm_marketing", "description": "Twenty CRM contacts, email deliverability check (check-if-email-exists), newsletter campaigns, SMS/WhatsApp messaging, growth marketing.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "email": {"type": "string"}, "name": {"type": "string"}, "message": {"type": "string"}}, "required": ["action"]}}},
+    {"type": "function", "function": {"name": "workflow_engine", "description": "Huginn/DeerFlow event-driven DAG workflow automation, triggers, pipeline execution, Nectarlink webhook dispatcher.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "pipeline_id": {"type": "string"}, "name": {"type": "string"}}, "required": ["action"]}}},
+    {"type": "function", "function": {"name": "cloud_sandbox", "description": "grok-build compiler optimizer, Edge0 on-device edge AI, Cactus/Prime-Agent distributed compute, Cloudroom ephemeral sandbox, localthingsb IoT bridge.", "parameters": {"type": "object", "properties": {"action": {"type": "string"}, "target": {"type": "string"}, "command": {"type": "string"}}, "required": ["action"]}}}
 ]
 
 
@@ -1106,6 +1141,20 @@ def _execute_tool_call(func_name: str, args: dict) -> str:
             return inbox_agent(parameters=args) if inbox_agent else "Module not available."
         elif func_name == "reverse_engineer":
             return reverse_engineer(parameters=args) if reverse_engineer else "Module not available."
+        elif func_name == "vision_pose":
+            return vision_pose(parameters=args) if vision_pose else "Module not available."
+        elif func_name == "data_scraper":
+            return data_scraper(parameters=args) if data_scraper else "Module not available."
+        elif func_name == "trading_agent":
+            return trading_agent(parameters=args) if trading_agent else "Module not available."
+        elif func_name == "security_suite":
+            return security_suite(parameters=args) if security_suite else "Module not available."
+        elif func_name == "crm_marketing":
+            return crm_marketing(parameters=args) if crm_marketing else "Module not available."
+        elif func_name == "workflow_engine":
+            return workflow_engine(parameters=args) if workflow_engine else "Module not available."
+        elif func_name == "cloud_sandbox":
+            return cloud_sandbox(parameters=args) if cloud_sandbox else "Module not available."
 
         return f"Error: Tool '{func_name}' is not recognized."
     except Exception as e:

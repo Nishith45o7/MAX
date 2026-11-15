@@ -89,7 +89,7 @@
 ## <img src="https://media.giphy.com/media/VgCDAzcKvsR6OM0uWg/giphy.gif" width="30" height="30"/> Features
 
 <div align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=18&pause=1500&color=FF6B6B&center=true&vCenter=true&repeat=true&width=600&lines=%E2%9A%A1+31+Action+Modules+%7C+4+Core+Engines;%F0%9F%94%A5+37+Open-Source+Ecosystem+Integrations;%F0%9F%9B%A1%EF%B8%8F+Zero+Subscription+%E2%80%A2+Total+Desktop+Autonomy" alt="Features Count" />
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=18&pause=1500&color=FF6B6B&center=true&vCenter=true&repeat=true&width=650&lines=%E2%9A%A1+38+Action+Modules+%7C+4+Core+Engines;%F0%9F%94%A5+76+Open-Source+Ecosystem+Integrations;%F0%9F%9B%A1%EF%B8%8F+Zero+Subscription+%E2%80%A2+Total+Desktop+Autonomy" alt="Features Count" />
 </div>
 
 <br/>
@@ -231,27 +231,34 @@ Memory Architecture
 </details>
 
 <details>
-<summary><h3>⚡ Update-6: Power Modules (37 Repositories Integrated)</h3></summary>
+<summary><h3>⚡ Update-6: Mega Power Modules (76 Repositories Integrated)</h3></summary>
 
 <br/>
 
-> **37 open-source projects** distilled into 13 high-performance native modules with zero mandatory subscriptions.
+> **76 leading open-source repositories** distilled into 20 high-performance native modules with zero mandatory cloud subscriptions.
 
 | Module | Features & Capabilities | Inspired By |
 |:---|:---|:---|
 | 🌐 **Free LLM Hub** | 14+ free LLM providers (Groq, OpenRouter, Cerebras, SambaNova, Pollinations, Gemini), latency benchmark, model discovery | `awesome-freellm-apis`, `MiniCPM` |
-| 📑 **Document Manager** | PDF merge/split/compress, watermark, AES encrypt, OCR text extract, HTML to PDF, document search & indexing | `paperless-ngx`, `Stirling-PDF`, `ppt-master` |
+| 📑 **Document Manager** | PDF merge/split/compress, watermark, AES encrypt, OCR text extract, HTML to PDF, slide deck generator, academic morphing | `paperless-ngx`, `Stirling-PDF`, `ppt-master`, `Papermorph`, `tome-ui` |
 | 🔖 **Bookmark Manager** | Bookmark storage with auto-title extraction, tag taxonomy, full-text search, JSON export | `karkeep` |
 | 🔐 **Encrypted Vault** | AES-256 Fernet credential vault, strong password generator, HaveIBeenPwned k-anonymity breach checker | `vaultwarden`, `bitwarden/server` |
-| 🧠 **Second Brain / KB** | FTS5 notes, bidirectional note links, skills repository, searchable code snippet library | `anytype-ts`, `claude-mem`, `paperclip`, `everything-claude-code`, `skills` |
-| 🛡️ **Network Guard** | Hosts-file DNS ad/tracker blocker (30+ known ad domains), DNS lookup, privacy audit report, speed test | `AdGuardHome`, `camofox-browser` |
+| 🧠 **Second Brain / KB** | FTS5 notes, bidirectional note links, skills repository, searchable code snippet library | `anytype-ts`, `claude-mem`, `paperclip`, `everything-claude-code`, `skills`, `team-skills` |
+| 🛡️ **Network Guard** | Hosts-file DNS ad/tracker blocker (30+ known ad domains), DNS lookup, Sniffnet traffic monitor, KokonutUI glass cards | `AdGuardHome`, `camofox-browser`, `sniffnet`, `kokonutui` |
 | 🔄 **Sync Engine** | Multi-folder change monitoring, SHA-256 comparison, timestamped zip backups & instant restore | `syncthing` |
 | 🏠 **Smart Home (IoT)** | Home Assistant REST integration, light/switch/climate control, scenes, automations, with built-in offline demo mode | `home-assistant/core` |
-| 🎬 **Media Library** | Audio/video scanner, Pollinations AI image gen, thumbnail generator, video frame extraction, playlist builder | `audiobookshelf`, `ComfyUI`, `Handy` |
+| 🎬 **Media Library** | Audio/video scanner, Pollinations AI image gen, thumbnail generator, video frame extraction, Spotify control, OpenTune audio | `audiobookshelf`, `ComfyUI`, `Handy`, `spotifast`, `OpenTune` |
 | 📈 **Finance Engine** | Real-time stock quotes (Yahoo/AlphaVantage), crypto prices, portfolio tracker with P&L, RSI/SMA technical analysis | `AutoHedge`, `Vibe-Trading`, `FinceptTerminal` |
 | 🎨 **AI Creative Studio** | Text-to-image, avatar generator, multi-platform ad copywriter, TTS speech output, meme creator, creative briefs | `Open-Generative-AI`, `Open-LLM-VTuber`, `claude-ads`, `hyperframes`, `VibeVoice`, `OmniVoice`, `granite-speech-models` |
 | 📥 **Agentic Inbox** | IMAP email reader, clipboard AI assistant (summarize/translate/fix), multi-agent task delegator, team broadcast | `agentic-inbox`, `agency-agents` |
 | 🔬 **Reverse Engineer** | PE/ELF binary inspector, Python AST code analyzer, Mermaid diagram generator, security flaw scanner, hex viewer | `gods-eye-view`, `rea`, `diagram-design`, `HeyGemini` |
+| 🧍 **Vision & Pose AI** | 2D/3D human pose keypoints, posture & ergonomics check, gesture recognition, stickman storyboard directing, MoCap export | `openpose`, `mmpose`, `tfjs-models`, `VideoPose3D`, `WHAM`, `4D-Humans`, `EasyMocap`, `stickman-video-director` |
+| 🕷️ **Data & Web Scraper** | Stealth resilient web scraper, Google Maps business lead generator, Omniget universal downloader, Fireclaw crawler, YouPI-PG | `Scrapling`, `google-maps-scraper`, `omniget`, `fireclaw`, `YouPI-PG` |
+| 🤖 **Quantitative Trader** | Multi-agent research debate (fundamental/technical/risk/sentiment), systematic backtesting (SMA/RSI/Bollinger), VaR risk model | `TradingAgents`, `awesome-systematic-trading` |
+| 🛡️ **Defensive Security** | SSL/TLS certificate audit, HTTP security headers checker, BlueTeam IOC threat hunter, Ares AI red-teaming & injection defense | `BlueTeam-Tools`, `cloudflare/security-audit-skill`, `ares` |
+| 📇 **CRM & Marketing** | Twenty CRM pipelines, check-if-email-exists validator, Listmonk newsletter broadcast, httpSMS gateway, WA-AKG WhatsApp bot | `twenty`, `listmonk`, `aaron-marketing-skills`, `httpsms`, `check-if-email-exists`, `WA-AKG` |
+| ⚙️ **Workflow DAG Engine** | Huginn/DeerFlow event-driven DAG automation pipelines, trigger evaluation, Nectarlink webhook bridging | `huginn`, `deer-flow`, `nectarlink` |
+| ☁️ **Cloud Sandbox & Edge** | grok-build compiler optimizer, Edge0 on-device edge AI, Cactus/Prime-Agent distributed compute, Cloudroom sandbox, localthingsb IoT | `grok-build`, `Edge0`, `cactus`, `prime-agent`, `cloudroom`, `localthingsb` |
 
 </details>
 
@@ -349,16 +356,19 @@ MAX/
 ├── 📄 doc_tools.py             # PDF & PowerPoint generation
 ├── 🌐 web_tool.py              # Web search utility
 │
-├── ⚡ actions/                  # ─── Modular Action Plugins (31 Total) ───
+├── ⚡ actions/                  # ─── Modular Action Plugins (38 Total) ───
 │   ├── ai_studio.py             #     🎨 Generative AI, avatars, TTS & ad copy
 │   ├── bookmark_manager.py      #     🔖 Smart URL bookmarking & tagging
 │   ├── browser_control.py       #     🌐 Playwright browser automation
+│   ├── cloud_sandbox.py         #     ☁️ Build optimizer, edge AI & cloud sandboxes
 │   ├── code_helper.py           #     💻 Code analysis & generation
 │   ├── computer_control.py      #     🖥️ Terminal & system commands
 │   ├── computer_settings.py     #     ⚙️ Volume, brightness, shortcuts
+│   ├── crm_marketing.py         #     📇 Twenty CRM, email validation & messaging
+│   ├── data_scraper.py          #     🕷️ Stealth scraper, Google Maps leads & downloader
 │   ├── desktop.py               #     🖱️ Desktop automation (clicks, typing)
 │   ├── dev_agent.py             #     🛠️ Full development workflow agent
-│   ├── document_manager.py      #     📑 PDF merge/split/OCR & doc search
+│   ├── document_manager.py      #     📑 PDF merge/split/OCR & slide morphing
 │   ├── file_controller.py       #     📂 File CRUD operations
 │   ├── file_processor.py        #     📎 Document upload & analysis
 │   ├── finance_engine.py        #     📈 Real-time stocks, crypto & portfolio
@@ -367,19 +377,23 @@ MAX/
 │   ├── game_updater.py          #     🎮 Steam & Epic Games management
 │   ├── inbox_agent.py           #     📥 IMAP email, clipboard AI & task delegation
 │   ├── knowledge_base.py        #     🧠 Notes, code snippets & skills library
-│   ├── media_library.py         #     🎬 Media scanner, player & AI generation
-│   ├── network_guard.py         #     🛡️ Hosts ad/tracker blocker & network test
+│   ├── media_library.py         #     🎬 Media scanner, player, Spotify & OpenTune
+│   ├── network_guard.py         #     🛡️ Hosts ad blocker, Sniffnet traffic & UI cards
 │   ├── open_app.py              #     🚀 Cross-platform app launcher
 │   ├── public_api_tools.py      #     🔌 Public API integrations
 │   ├── reminder.py              #     ⏰ Smart reminders
 │   ├── reverse_engineer.py      #     🔬 Binary/AST analysis, diagrams & audit
 │   ├── screen_processor.py      #     👁️ Real-time screen vision
+│   ├── security_suite.py        #     🛡️ SSL audit, security headers & AI red-teaming
 │   ├── send_message.py          #     💬 Message dispatch
 │   ├── smart_home.py            #     🏠 Home Assistant & IoT automation
 │   ├── sync_engine.py           #     🔄 Folder sync watcher, diff & backup
+│   ├── trading_agent.py         #     🤖 Multi-agent trading & systematic backtesting
 │   ├── vault_manager.py         #     🔐 AES-256 encrypted password vault & HIBP
+│   ├── vision_pose.py           #     🧍 2D/3D human pose, posture & storyboard
 │   ├── weather_report.py        #     🌤️ Weather information
 │   ├── web_search.py            #     🔍 DuckDuckGo search engine
+│   ├── workflow_engine.py       #     ⚙️ Huginn/DeerFlow event-driven DAG automation
 │   └── youtube_video.py         #     📺 YouTube operations
 │
 ├── 🤖 agent/                    # ─── Autonomous Task Engine ───

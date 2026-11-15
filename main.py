@@ -52,6 +52,13 @@ from actions.finance_engine    import finance_engine
 from actions.ai_studio         import ai_studio
 from actions.inbox_agent       import inbox_agent
 from actions.reverse_engineer  import reverse_engineer
+from actions.vision_pose       import vision_pose
+from actions.data_scraper      import data_scraper
+from actions.trading_agent     import trading_agent
+from actions.security_suite    import security_suite
+from actions.crm_marketing     import crm_marketing
+from actions.workflow_engine   import workflow_engine
+from actions.cloud_sandbox     import cloud_sandbox
 
 
 def get_base_dir():
@@ -720,6 +727,99 @@ TOOL_DECLARATIONS = [
             "required": ["action"]
         }
     },
+    {
+        "name": "vision_pose",
+        "description": "Computer vision: 2D/3D human pose estimation, posture & ergonomics check, gesture recognition, stickman storyboard directing, mocap export.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "action": {"type": "STRING", "description": "posture_check | analyze_pose | gesture_detect | stickman_storyboard | mocap_export"},
+                "file_path": {"type": "STRING", "description": "Image/video file path"},
+                "prompt": {"type": "STRING", "description": "Storyboard scene description"},
+            },
+            "required": ["action"]
+        }
+    },
+    {
+        "name": "data_scraper",
+        "description": "Stealth web scraping, Google Maps lead generation, omniget universal downloader, deep web crawling, YouTube extractor.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "action": {"type": "STRING", "description": "scrape_url | google_maps_leads | omniget_download | deep_crawl | youtube_extract"},
+                "url": {"type": "STRING", "description": "Target webpage or media URL"},
+                "query": {"type": "STRING", "description": "Business or search query"},
+                "location": {"type": "STRING", "description": "City or geographic location for leads"},
+            },
+            "required": ["action"]
+        }
+    },
+    {
+        "name": "trading_agent",
+        "description": "Multi-agent financial trading research, systematic strategy backtesting (SMA, RSI, Bollinger), risk metrics (VaR).",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "action": {"type": "STRING", "description": "multi_agent_consensus | backtest_strategy | risk_metrics | strategy_catalog"},
+                "symbol": {"type": "STRING", "description": "Stock ticker or crypto symbol"},
+                "strategy": {"type": "STRING", "description": "sma_crossover | rsi_reversion | bollinger"},
+            },
+            "required": ["action"]
+        }
+    },
+    {
+        "name": "security_suite",
+        "description": "Blue Team cybersecurity: SSL/TLS certificate audit, web security headers, IOC threat hunting, Ares AI red-teaming, CVE lookup.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "action": {"type": "STRING", "description": "security_headers | ssl_audit | ioc_scan | ai_red_team | cve_lookup"},
+                "url": {"type": "STRING", "description": "Website or domain to audit"},
+                "ioc": {"type": "STRING", "description": "IP, hash, or domain to scan"},
+            },
+            "required": ["action"]
+        }
+    },
+    {
+        "name": "crm_marketing",
+        "description": "Twenty CRM contacts, email deliverability validation (check-if-email-exists), newsletter campaigns, SMS/WhatsApp messaging, growth marketing.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "action": {"type": "STRING", "description": "verify_email | crm_add_contact | crm_list_contacts | campaign_broadcast | sms_gateway | whatsapp_trigger | growth_strategy"},
+                "email": {"type": "STRING", "description": "Email address to verify or contact"},
+                "name": {"type": "STRING", "description": "Contact name"},
+                "message": {"type": "STRING", "description": "Message or text body"},
+            },
+            "required": ["action"]
+        }
+    },
+    {
+        "name": "workflow_engine",
+        "description": "Huginn/DeerFlow event-driven DAG workflow automation, triggers, pipeline execution, Nectarlink webhook dispatcher.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "action": {"type": "STRING", "description": "list_pipelines | create_pipeline | run_pipeline | webhook_dispatch | trigger_event"},
+                "pipeline_id": {"type": "STRING", "description": "Pipeline identifier"},
+                "name": {"type": "STRING", "description": "Pipeline name"},
+            },
+            "required": ["action"]
+        }
+    },
+    {
+        "name": "cloud_sandbox",
+        "description": "grok-build compiler optimizer, Edge0 on-device edge AI, Cactus/Prime-Agent distributed compute, Cloudroom ephemeral sandbox, localthingsb IoT bridge.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "action": {"type": "STRING", "description": "build_optimize | edge_infer | distributed_compute | cloud_sandbox | iot_local_bridge"},
+                "target": {"type": "STRING", "description": "Target project or compute task"},
+                "command": {"type": "STRING", "description": "Sandbox command to execute"},
+            },
+            "required": ["action"]
+        }
+    },
 ]
 
 
@@ -952,6 +1052,27 @@ class JarvisLive:
                 result = r or "Done."
             elif name == "reverse_engineer":
                 r = await loop.run_in_executor(None, lambda: reverse_engineer(parameters=args, player=self.ui))
+                result = r or "Done."
+            elif name == "vision_pose":
+                r = await loop.run_in_executor(None, lambda: vision_pose(parameters=args, player=self.ui))
+                result = r or "Done."
+            elif name == "data_scraper":
+                r = await loop.run_in_executor(None, lambda: data_scraper(parameters=args, player=self.ui))
+                result = r or "Done."
+            elif name == "trading_agent":
+                r = await loop.run_in_executor(None, lambda: trading_agent(parameters=args, player=self.ui))
+                result = r or "Done."
+            elif name == "security_suite":
+                r = await loop.run_in_executor(None, lambda: security_suite(parameters=args, player=self.ui))
+                result = r or "Done."
+            elif name == "crm_marketing":
+                r = await loop.run_in_executor(None, lambda: crm_marketing(parameters=args, player=self.ui))
+                result = r or "Done."
+            elif name == "workflow_engine":
+                r = await loop.run_in_executor(None, lambda: workflow_engine(parameters=args, player=self.ui))
+                result = r or "Done."
+            elif name == "cloud_sandbox":
+                r = await loop.run_in_executor(None, lambda: cloud_sandbox(parameters=args, player=self.ui))
                 result = r or "Done."
             elif name == "shutdown_jarvis":
                 self.ui.write_log("SYS: Shutdown requested.")

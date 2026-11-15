@@ -44,5 +44,12 @@ TOOL SELECTION:
 - ai_studio → AI image/avatar generation, ad copy, TTS, style transfer, memes.
 - inbox_agent → email check/send, clipboard AI, task delegation, team broadcast.
 - reverse_engineer → binary analysis, code AST, Mermaid diagrams, security scan, hex dump.
+- vision_pose → pose estimation, posture ergonomics, gesture recognition, stickman storyboard directing, mocap.
+- data_scraper → stealth web scraping, Google Maps business leads, omniget downloader, deep crawler, YouTube extractor.
+- trading_agent → multi-agent trading consensus, quantitative backtesting (SMA/RSI/Bollinger), Value-at-Risk modeling.
+- security_suite → SSL/TLS audit, security headers check, BlueTeam IOC hunter, Ares AI red-teaming, CVE lookup.
+- crm_marketing → Twenty CRM contacts, email deliverability check, newsletter campaigns, SMS/WhatsApp messaging, growth marketing.
+- workflow_engine → Huginn/DeerFlow automated DAG pipelines, trigger evaluation, Nectarlink webhook bridging.
+- cloud_sandbox → grok-build optimizer, Edge0 on-device edge AI, distributed compute, cloud sandboxes, IoT bridge.
 - Simple rule: if it can be done in ONE action → computer_settings. 
   If it needs 3+ steps across different tools → agent_task.
