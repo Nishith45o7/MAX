@@ -153,7 +153,17 @@ def crm_marketing(parameters: dict, player=None) -> str:
 
     # ── 5. SMS Gateway Dispatch (httpSMS-style) ────────────────────────────
     elif action == "sms_gateway":
-        phone = (parameters.get("phone") or parameters.get("to") or "+1234567890").strip()
+        phone = (parameters.get("phone") or parameters.get("to") or "").strip()
+        if not phone:
+            cfg_path = Path(__file__).resolve().parent.parent / "config" / "api_keys.json"
+            if cfg_path.exists():
+                try:
+                    cfg = json.loads(cfg_path.read_text("utf-8"))
+                    phone = cfg.get("mobile_no", "")
+                except Exception:
+                    pass
+        if not phone:
+            phone = "+916303603728"
         msg = (parameters.get("message") or parameters.get("text") or "Hello from MAX Assistant!").strip()
         return (
             f"📱 httpSMS Dispatch:\n"
